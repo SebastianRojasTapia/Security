@@ -11,12 +11,12 @@ from django.db import models
 class Actividad(models.Model):
     idactividad = models.BigAutoField(primary_key=True)
     descripcion = models.TextField()  # This field type is a guess.
-    fechainicio = models.TextField()  # This field type is a guess.
-    fechatermino = models.TextField()  # This field type is a guess.
-    horainicio = models.TextField()  # This field type is a guess.
-    horatermino = models.TextField()  # This field type is a guess.
+    fechainicio = models.DateField()  # This field type is a guess.
+    fechatermino = models.DateField()  # This field type is a guess.
+    horainicio = models.TimeField()  # This field type is a guess.
+    horatermino = models.TimeField()  # This field type is a guess.
     cantidadasistente = models.BigIntegerField(blank=True, null=True)
-    fecharegistro = models.TextField(blank=True, null=True)  # This field type is a guess.
+    fecharegistro = models.DateField(blank=True, null=True)  # This field type is a guess.
     direccion = models.TextField(blank=True, null=True)  # This field type is a guess.
     idtipoactividad = models.ForeignKey('TipoActividad', models.DO_NOTHING, db_column='idtipoactividad')
     rutcliente = models.ForeignKey('Cliente', models.DO_NOTHING, db_column='rutcliente')
@@ -47,7 +47,7 @@ class CheckList(models.Model):
     isseguro = models.CharField(max_length=1, blank=True, null=True)
     istrabajoseguro = models.CharField(max_length=1, blank=True, null=True)
     descripcion = models.TextField()  # This field type is a guess.
-    fecharegistro = models.TextField()  # This field type is a guess.
+    fecharegistro = models.DateField()  # This field type is a guess.
 
     class Meta:
         managed = False
@@ -71,7 +71,7 @@ class ComprobantePago(models.Model):
     numerotarjeta = models.TextField()  # This field type is a guess.
     pintarjeta = models.BigIntegerField()
     fechavalida = models.TextField()  # This field type is a guess.
-    fecharegistro = models.TextField()  # This field type is a guess.
+    fecharegistro = models.DateField()  # This field type is a guess.
     monto = models.BigIntegerField()
     tipomoneda = models.TextField()  # This field type is a guess.
     valorusd = models.TextField()  # This field type is a guess.
@@ -87,7 +87,7 @@ class Contrato(models.Model):
     idcontrato = models.BigAutoField(primary_key=True)
     descripcion = models.TextField()  # This field type is a guess.
     valor = models.BigIntegerField()
-    fechacontrato = models.TextField()  # This field type is a guess.
+    fechacontrato = models.DateField()  # This field type is a guess.
     idpago = models.ForeignKey('Pago', models.DO_NOTHING, db_column='idpago')
     rutcliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='rutcliente')
     idactividad = models.ForeignKey(Actividad, models.DO_NOTHING, db_column='idactividad')
@@ -101,7 +101,7 @@ class HistorialActividad(models.Model):
     idhistorial = models.BigAutoField(primary_key=True)
     cantcapacitaciones = models.BigIntegerField(blank=True, null=True)
     cantaccidentesasistidos = models.BigIntegerField(blank=True, null=True)
-    fecharegistro = models.TextField(blank=True, null=True)  # This field type is a guess.
+    fecharegistro = models.DateField(blank=True, null=True)  # This field type is a guess.
     rutprofesional = models.ForeignKey('Profesional', models.DO_NOTHING, db_column='rutprofesional')
 
     class Meta:
@@ -111,7 +111,7 @@ class HistorialActividad(models.Model):
 
 class Pago(models.Model):
     idpago = models.BigAutoField(primary_key=True)
-    fecharegistro = models.TextField()  # This field type is a guess.
+    fecharegistro = models.DateField()  # This field type is a guess.
     montopago = models.BigIntegerField()
     idcomprobante = models.ForeignKey(ComprobantePago, models.DO_NOTHING, db_column='idcomprobante')
     idcanalpago = models.ForeignKey(CanalPago, models.DO_NOTHING, db_column='idcanalpago')
