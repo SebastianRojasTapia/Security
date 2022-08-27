@@ -161,9 +161,13 @@
       box-shadow: none !important;
   }
 
-    .breadcrumb-alt .breadcrumb-item + .breadcrumb-item::before{
-        content: none;
-    }
+  .breadcrumb-alt .breadcrumb-item + .breadcrumb-item::before{
+      content: none;
+  }
+
+  .dropdown-toggle::after{
+    content: none;
+  }
 
 </style>
 
@@ -183,9 +187,8 @@
       <div class="navbar navbar-expand-lg navbar-light bg-light navbar-sticky" data-fixed-element>
         <div class="container px-0 px-xl-3">
           <a href="{% url 'index' %}" class="navbar-brand order-lg-1 mr-0 pr-lg-3 mr-lg-4">
-            <img href="{% static 'dist/img/shield_32.png'%}">
+            <h3 class="mt-4">Security</h3>
           </a>
-          <img href="{% static 'dist/img/shield_32.png'%}">
           <!-- Toolbar -->
           <div class="d-flex align-items-center order-lg-3">
             <ul class="nav nav-tools flex-nowrap">

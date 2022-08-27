@@ -17,8 +17,6 @@ def logout_vista(request):
     logout(request)
     return render(request,'login.html')
 
-
-
 def index(request):
     return render(request,'index.html')
 
@@ -26,7 +24,7 @@ def login(request):
     data = {
         'rubro':listar_rubro()
     }
-    if request.method == 'POST':
+    if 'registro' in request.POST:
         rutCliente = request.POST.get('rut')
         razonSocial = request.POST.get('razonSocial')
         numeroContacto = request.POST.get('numeroContacto')
@@ -51,20 +49,19 @@ def login(request):
         else:
             data['mensaje'] = 'Error en el registro vuelva intentar.'
         return render(request,'login.html',data)
+
+    elif 'login' in request.POST:
+        user = request.POST.get("user")
+        password = request.POST.get("pass")
+        us = authenticate(request,username=user,password=password)
+        if us is not None and us.is_active:
+            login_autent(request,us)
+            return render(request,'index.html',{'user':us})
+        else:
+            return render(request,'login.html',{'msg':'Usuario o contraseña incorrecta'})
+
     return render(request,'login.html',data)
-
-    # if request.POST:
-    #     user = request.POST.get("user")
-    #     password = request.POST.get("pass")
-    #     us = authenticate(request,username=user,password=password)
-    #     if us is not None and us.is_active:
-    #         login_autent(request,us)
-    #         return render(request,'index.html',{'user':us})
-    # else:
-    #     return render(request,'login.html',{'msg':'Usuario o contraseña incorrecta'})
-    # return render(request,'login.html')
-    
-
+  
 def contacto(request):
     return render(request,'contacto.html')
     
