@@ -196,7 +196,8 @@
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" class="nav-link">Bienvenido @{{user.username}}</a>
                 <ul class="dropdown-menu">
-                  <li><a href="{% url 'LOGOUT'%}" class="dropdown-item">Cerrar Sesión</a></li>
+                  <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
+                  <li><a href="{% url 'perfil'%}" class="dropdown-item"><i class="fa-regular fa-user font-size-sm mr-2"></i>Perfil</a></i></li>
                 </ul>
               </li>       
               {% else %}

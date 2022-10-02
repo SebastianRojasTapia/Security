@@ -7,6 +7,7 @@ urlpatterns = [
     path('mision-vision/',visionMision, name='misionVision'),
     path('contacto/',contacto, name='contacto'),
     path('asesoria/',asesoria, name='asesoria'),
+    path('perfil/',perfil, name='perfil'),
     path('plan/',plan, name='plan'),
     path('logout_vista/',logout_vista,name='LOGOUT'),
 ]

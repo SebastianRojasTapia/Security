@@ -1,5 +1,5 @@
 # Create your views here.
-from re import template
+from re import U, template
 from django.shortcuts import render
 from django.contrib.auth.models import User
 # adjuntamos la libreria de autenticar 
@@ -74,14 +74,58 @@ def visionMision(request):
 def asesoria(request):
     return render(request,'asesoria.html')
 
+def perfil(request):
+    user = request.user.get_username()
+    data = {'solicitud':listar_usuario(user)}
+    if request.method == 'POST':
+        correo = request.POST.get('email')
+        telefono = request.POST.get('telefono')
+        password = request.POST.get('password')
+        password_confirmed= request.POST.get('password_confirmed')
+
+        if password != None:
+            if password == password_confirmed:
+                print('hola cambiaste la clave')
+                u = User.objects.get(username__exact=user)
+                u.email = correo
+                u.set_password(password)
+                u.save()
+                salida = SP_MODIFICAR_USER_PASS(telefono, correo, user, u.password)
+                if salida == 1:
+                    data['mensaje'] = 'Modificado correctamente'
+                else:
+                    data['mensaje'] = 'No se ha podido modificar'
+            else:
+                data['mensaje'] = 'Las contraseñas deben ser iguales'
+        else:
+            salida = SP_MODIFICAR_USER(telefono, correo, user)
+             
+            if salida == 1:
+                data['mensaje'] = 'Modificado correctamente'
+            else:
+                data['mensaje'] = 'No se ha podido modificar'
+    return render(request,'perfil.html',data)
 
 #----------------- Listado -----------------
-
 def agregar_usuario(rutCliente, razonSocial, numeroContacto,rubro,correo,contrasena):
     django_cursor = connection.cursor()
     cursor = django_cursor.connection.cursor()
     salida = cursor.var(cx_Oracle.NUMBER)
     cursor.callproc("SP_AGREGAR_USUARIO_CLIENTE",[rutCliente, razonSocial, numeroContacto, rubro, correo,  contrasena, salida])
+    return salida.getvalue()
+
+def SP_MODIFICAR_USER_PASS(numeroContacto, correo, razonSocial, contrasena):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    salida = cursor.var(cx_Oracle.NUMBER)
+    cursor.callproc("SP_MODIFICAR_USER_PASS",[numeroContacto, correo, razonSocial , contrasena, salida])
+    return salida.getvalue()
+
+def SP_MODIFICAR_USER(numeroContacto, correo, razonSocial):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    salida = cursor.var(cx_Oracle.NUMBER)
+    cursor.callproc("SP_MODIFICAR_USER",[numeroContacto, correo, razonSocial, salida])
     return salida.getvalue()
 
 def listar_rubro():
@@ -105,3 +149,15 @@ def listar_tipo_actividad():
     for fila in out_cur:
         lista.append(fila)
     return lista
+
+def listar_usuario(user):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor() #llama 
+    out_cur = django_cursor.connection.cursor() #recibe
+    cursor.callproc("SP_USUARIO",[user,out_cur])
+    
+    lista = []
+    for fila in out_cur:
+        lista.append(fila)
+        # print('\n'.join(map(str, lista)))
+    return lista      
