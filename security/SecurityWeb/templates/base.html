@@ -15,8 +15,10 @@
   <meta name="theme-color" content="#ffffff">
 
   <!-- Vendor Styles-->
+  {% block estilos %}
+  {% endblock estilos %}
   <link rel="stylesheet" media="screen" href="{% static 'dist/vendor/tiny-slider/dist/tiny-slider.css'%}"/>
-
+  
   <!-- Main Theme Styles + Bootstrap-->
   <link rel="stylesheet" media="screen" href="{% static 'dist/css/theme.min.css'%}">
   <link rel="stylesheet" href="{% static 'dist/css/simplebar.min.css'%}">
@@ -368,6 +370,12 @@
 
   <!-- Main theme script-->
   <script src="{% static 'dist/js/theme.min.js'%}"></script>
+  
+  <!-- Tarjeta Credito -->
+  {% block js %}
+
+  {% endblock js %}
+  
 
 </body>
 

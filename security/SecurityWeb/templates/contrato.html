@@ -1,0 +1,48 @@
+{% extends "base.html" %}}
+
+{% load static %}
+{% block contenido %}
+
+
+    <div class="container">
+        <div class="row mt-5 ">
+            <div class="col">
+                <h2 class="d-flex justify-content-center mb-5">Realizar Compra</h2>
+                <form id="procesar-pago"  method="POST">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <label for="rut" class="col-12 col-md-2 col-form-label h2">Rut :</label>
+                        <div class="col-12 col-md-10">
+                           <input type="text" class="col-12 col-form-label h2 font-weight-bold border-0" readonly value="{{d.0}}" id="rut" name="rut">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                            <label for="cliente" class="col-12 col-md-2 col-form-label h2">Cliente :</label>
+                            <div class="col-12 col-md-10">
+                               <input type="text" class="col-12 col-form-label h2 font-weight-bold border-0" readonly value="{{d.1}}" id="full" name="full">
+                            </div>
+                    </div>
+                    <div class="text-center mb-5">
+                        <div>
+                          <h2 style="color: #0074D9;">{{mensaje}}</h2>
+                        </div>
+                        <div>
+                            <h2 style="color: #0074D9;">{{ordenDespacho}}</h2>
+                        </div>
+                      </div>
+                    <div class="row">
+                        <div class="row justify-content-center">
+                            <div class="col-md-12 mb-2 mb-4">
+                                <a href="" class="btn btn-info btn-block">Seguir comprando</a>
+                            </div>  
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+<!-- Button trigger modal -->
+
+{% endblock contenido %}

@@ -1,7 +1,12 @@
 {% extends "base.html" %}}
-
 {% load static %}
+
+{% block estilos %}
+  <link rel="stylesheet" href="{% static 'dist/css/tarjeta.css'%}"/>
+{% endblock estilos %}
+
 {% block contenido %}
+
 <main class="cs-page-wrapper">
     <h3 class="text-center">Elige tu Opción</h3>
     
@@ -99,12 +104,174 @@
                     </ul>
                     </div>
                     <div class="card-footer pt-0 border-0 text-center">
-                    <a class="btn btn-primary mb-4" href="#">Elegir Plan</a>
+                        <a data-toggle="modal" href="#normalModal" class="btn btn-primary mb-4">Contratar</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <h1 class="text-center">{{mensaje}}</h1>
+
+    <div class="modal fade" id="normalModal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-card card" data-list="{&quot;valueNames&quot;: [&quot;name&quot;]}">
+                <div class="card-header">
+                  <!-- Title -->
+                  <h4 class="card-header-title text-center" id="exampleModalCenterTitle">
+                    ¿Quieres Contrarar este plan?
+                    <button type="button" class="close mt-1" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">x</span>
+                    </button>
+                  </h4>
     
+                </div>
+             
+                <div class="card-body">
+                  <p class="text-center">Ingresa Tus Datos</p>
+                  <div class="container-card">
+
+                    <div class="card-container">
+                
+                        <div class="front">
+                            <div class="image">
+                                <img src="{% static 'dist/img/chip.png'%}" alt="">
+                                <img src="{% static 'dist/img/visa.png'%}" alt="">
+                            </div>
+                            <div class="card-number-box">################</div>
+                            <div class="flexbox">
+                                <div class="box">
+                                  <span>Nombre Titular</span>
+                                  <div class="card-holder-name">Nombre Completo</div>
+                                </div>
+                                <div class="box">
+                                    <span>Valida Hasta</span>
+                                    <div class="expiration">
+                                        <span class="exp-month">MM/</span>
+                                        <span class="exp-year">YY</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div class="back">
+                            <div class="stripe"></div>
+                            <div class="box">
+                                <span>cvv</span>
+                                <div class="cvv-box"></div>
+                                <img src="image/visa.png" alt="">
+                            </div>
+                        </div>
+                
+                    </div>
+                
+                    <form action="{% url 'plan'%}" method="POST">
+                      {% csrf_token %}
+                      <div class="inputBox">
+                          <span>Numero Tarjeta</span>
+                          <input type="text" maxlength="16" class="card-number-input" name="numeroTarjeta">
+                      </div>
+                      <div class="inputBox">
+                          <span>Nombre Titular</span>
+                          <input type="text" class="card-holder-input" name="nombreTitular">
+                      </div>
+                      <div class="flexbox">
+                          <div class="inputBox">
+                              <span>Mes Valida</span>
+                              <select id="" class="month-input" name="mes">
+                                  <option value="month" selected disabled>month</option>
+                                  <option value="01">01</option>
+                                  <option value="02">02</option>
+                                  <option value="03">03</option>
+                                  <option value="04">04</option>
+                                  <option value="05">05</option>
+                                  <option value="06">06</option>
+                                  <option value="07">07</option>
+                                  <option value="08">08</option>
+                                  <option value="09">09</option>
+                                  <option value="10">10</option>
+                                  <option value="11">11</option>
+                                  <option value="12">12</option>
+                              </select>
+                          </div>
+                          <div class="inputBox">
+                              <span>Año Valida</span>
+                              <select id="" class="year-input" name="anio">
+                                  <option value="year" selected disabled>year</option>
+                                  <option value="21">21</option>
+                                  <option value="22">22</option>
+                                  <option value="23">23</option>
+                                  <option value="24">24</option>
+                                  <option value="25">25</option>
+                                  <option value="26">26</option>
+                                  <option value="27">27</option>
+                                  <option value="28">28</option>
+                                  <option value="29">29</option>
+                                  <option value="30">30</option>
+                              </select>
+                          </div>
+                          <div class="inputBox">
+                              <span>CVV</span>
+                              <input pattern="[0-9.]+" type="text" maxlength="4" class="cvv-input" placeholder="CVV" name="cvv">
+                          </div>
+                      </div>
+                      <button type="submit" class="submit-btn">Contratar</button>
+                    </form>
+                
+                  </div>   
+                  
+                    
+    
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+      </div><!-- /.modal -->
+      
+      
 </main>
+
+
+
+<script>
+  document.querySelector('.card-number-input').oninput = () =>{
+  document.querySelector('.card-number-box').innerText = document.querySelector('.card-number-input').value;
+  }
+
+  document.querySelector('.card-holder-input').oninput = () =>{
+  document.querySelector('.card-holder-name').innerText = document.querySelector('.card-holder-input').value;
+  }
+
+  document.querySelector('.month-input').oninput = () =>{
+  document.querySelector('.exp-month').innerText = document.querySelector('.month-input').value;
+  }
+
+  document.querySelector('.year-input').oninput = () =>{
+  document.querySelector('.exp-year').innerText = document.querySelector('.year-input').value;
+  }
+
+  document.querySelector('.cvv-input').onmouseenter = () =>{
+  document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(-180deg)';
+  document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(0deg)';
+  }
+
+  document.querySelector('.cvv-input').onmouseleave = () =>{
+  document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(0deg)';
+  document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(180deg)';
+  }
+
+  document.querySelector('.cvv-input').oninput = () =>{
+  document.querySelector('.cvv-box').innerText = document.querySelector('.cvv-input').value;
+  }
+</script>
+
 {% endblock contenido %}
+
+{% block js %}
+    
+{% endblock js %}

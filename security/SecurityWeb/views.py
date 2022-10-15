@@ -1,5 +1,12 @@
 # Create your views here.
+from ast import For
+from email.policy import strict
+from http import client
+from pydoc import describe
 from re import U, template
+from sqlite3 import Date
+import string
+from traceback import print_tb
 from django.shortcuts import render
 from django.contrib.auth.models import User
 # adjuntamos la libreria de autenticar 
@@ -7,9 +14,13 @@ from django.contrib.auth import authenticate,logout,login as login_autent
 #agregar decorador para impedir el ingreso a las paginas sin estar registrado
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import connection
-import cx_Oracle #para ocupar varibles de oracle
 
-from datetime import datetime # libreria para saber la fecha actual
+import cx_Oracle #para ocupar varibles de oracle
+import requests #llamados de api C#
+import json
+
+from datetime import date, datetime # libreria para saber la fecha actual
+
 
 # Create your views here.
 
@@ -19,6 +30,10 @@ def logout_vista(request):
 
 def index(request):
     return render(request,'index.html')
+
+
+def contrato(request):
+    return render(request,'contrato.html')
 
 def login(request):
     data = {
@@ -66,7 +81,56 @@ def contacto(request):
     return render(request,'contacto.html')
     
 def plan(request):
-    return render(request,'plan.html')
+    user = request.user.get_username()
+    dataMsg = {}
+    if request.method == 'POST':
+        url = "https://localhost:7000/ComprobantePago/SaveComprobante"
+
+        numeroTarjeta = request.POST.get('numeroTarjeta')
+        nombreTitular = request.POST.get('nombreTitular')
+        mes = request.POST.get('mes')
+        anio = request.POST.get('anio')
+        fechaValida = mes+anio
+        cvv = request.POST.get('cvv')
+        monto = 60
+        tipoMoneda = "CH"
+        canalPago = 1
+        descripcion = "Contratacion de Plan"
+
+        headers = {'Content-Type': 'application/json'}
+
+        payload = json.dumps({
+            'numeroTarjeta':numeroTarjeta,
+            'nombreTitular':nombreTitular,
+            'fechaValida':fechaValida,
+            'monto':monto,
+            'tipoMoneda':tipoMoneda,
+            'cvv':cvv
+        })
+
+        print(payload)
+        
+        response = requests.request("POST", url, headers=headers, data=payload, verify=False )
+
+        if response.status_code == 200:
+            data = json.loads(response.content.decode('utf-8'))
+
+            idcomprobante = data['idcomprobante']
+            montoPago = data['montoPago']
+            message = data['message']
+            fechaRegistro = data['fechaRegistro']
+            print(fechaRegistro)
+            fechaRegistro = fechaRegistro.replace("T","")
+            fechaRegistro = fechaRegistro[:-14]
+            print(fechaRegistro)
+
+            salida = SP_CONTRATO_PAGO(user,fechaRegistro,montoPago,canalPago,idcomprobante,descripcion)
+            if salida == 1:
+                dataMsg['mensaje'] = message
+            else:
+                dataMsg['mensaje'] = 'Error al contratar el plan'
+
+    return render(request,'plan.html',dataMsg)
 
 def visionMision(request):
     return render(request,'vision-mision.html')
@@ -126,6 +190,13 @@ def SP_MODIFICAR_USER(numeroContacto, correo, razonSocial):
     cursor = django_cursor.connection.cursor()
     salida = cursor.var(cx_Oracle.NUMBER)
     cursor.callproc("SP_MODIFICAR_USER",[numeroContacto, correo, razonSocial, salida])
+    return salida.getvalue()
+
+def SP_CONTRATO_PAGO(razonSocial, fechaRegistro, montoPago, idCanalPago, idComprobantePago, descripcion):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    salida = cursor.var(cx_Oracle.NUMBER)
+    cursor.callproc("SP_PAGO_CONTRATO",[razonSocial, fechaRegistro, montoPago, idCanalPago, idComprobantePago, descripcion, salida])
     return salida.getvalue()
 
 def listar_rubro():

@@ -10,4 +10,5 @@ urlpatterns = [
     path('perfil/',perfil, name='perfil'),
     path('plan/',plan, name='plan'),
     path('logout_vista/',logout_vista,name='LOGOUT'),
+    path('contrato/',contrato,name='contrato'),
 ]
