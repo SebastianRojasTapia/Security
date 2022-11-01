@@ -1,0 +1,44 @@
+{% extends "base.html" %}}
+
+{% load static %}
+{% block contenido %}
+<main class="cs-page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="bg-secondary mb-3" aria-label="breadcrumb">
+        <div class="container">
+            <ol class="breadcrumb breadcrumb-alt mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'index' %}"><i class="fa-solid fa-house"></i></a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">Inicio</li>
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-angle-right"></i>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Error</li>
+            </ol>
+            
+        </div>
+    </nav>
+
+      <!-- Page container -->
+      <section class="container pt-3 pt-lg-4 pb-5 pb-lg-6">
+        <div class="row pb-2 pb-lg-0">
+            
+        
+          <!-- Content -->
+          <div class="col-lg-12 ml-auto">
+            <div style="text-align: center; color: blue; font-size: 25px; ">
+                <h1 class="text-primary">{{id}}</h1>
+                <h5 class="text-primary">{{error}}</h5>
+                <a href="{% url 'index' %}" class="btn btn-primary">Redirigir Página</a>
+            </div>
+
+            
+
+          </div>
+        </div>
+      </section>
+
+</main>
+{% endblock contenido %}

@@ -8,14 +8,18 @@
     <nav class="bg-secondary mb-3" aria-label="breadcrumb">
         <div class="container">
             <ol class="breadcrumb breadcrumb-alt mb-0">
-            <li class="breadcrumb-item">
-                <a href="{% url 'index' %}"><i class="fa-solid fa-house"></i></a>
-            </li>
-            <li class="breadcrumb-item" aria-current="page">Inicio</li>
-            <li class="breadcrumb-item">
-                <i class="fa-solid fa-angle-right"></i>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">Check List</li>
+              <li class="breadcrumb-item">
+                  <a href="{% url 'index' %}"><i class="fa-solid fa-house"></i></a>
+              </li>
+              <li class="breadcrumb-item" aria-current="page">Inicio</li>
+              <li class="breadcrumb-item">
+                  <i class="fa-solid fa-angle-right"></i>
+              </li>
+              <li class="breadcrumb-item" aria-current="page">Check List</li>
+              <li class="breadcrumb-item">
+                <a href="{% url 'check_list_index' %}"><i class="fa-solid fa-angle-right"></i></a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Check List Modificar</li>
             </ol>
             
         </div>
@@ -33,9 +37,10 @@
             </div>
             <div class="mb-4 pb-1 pb-sm-3">
                 <i class="fa-sharp fa-solid fa-circle-exclamation" style="color: red;"></i><strong style="color: black;"> Selección Unica</strong></span>
-              </div>
-            
-            <!-- <form action="{% url 'check_modificar'%}" method="POST"> -->
+            </div>
+
+            {% for item in checklist %}
+            <form action="{% url 'check_modificar' item.idcheck %}" method="POST">
             {% csrf_token %}
             <div class="row">
                 <div class="col-lg-6 mb-4 form-group">
@@ -46,7 +51,7 @@
 
             <div class="row pb-3">
                 
-                {% for item in checklist %}
+                
                 
                 <div class="col-lg-6 mb-4">
                     <label for="signin-email">1. <i class="fa-solid fa-triangle-exclamation"></i> Existe Señaletica</label>
@@ -54,7 +59,9 @@
                         <option value="">Selecciona la Asesoria</option>
                         {% if item.isseniales == "Si" %}
                         <option value="{{item.isseniales}}" selected>{{item.isseniales}}</option>
+                        <option value="No">No</option>
                         {% else %}
+                        <option value="Si">Si</option>
                         <option value="{{item.isseniales}}"selected>{{item.isseniales}}</option>
                         {% endif %}
                       </select>
@@ -66,7 +73,9 @@
                         <option value="">Selecciona la Asesoria</option>
                         {% if item.iselementoseguridad == "Si" %}
                         <option value="{{item.iselementoseguridad}}" selected>{{item.iselementoseguridad}}</option>
+                        <option value="No">No</option>
                         {% else %}
+                        <option value="Si">Si</option>
                         <option value="{{item.iselementoseguridad}}"selected>{{item.iselementoseguridad}}</option>
                         {% endif %}
                       </select>
@@ -77,7 +86,9 @@
                         <option value="">Selecciona la Asesoria</option>
                         {% if item.ismaterial == "Si" %}
                         <option value="{{item.ismaterial}}" selected>{{item.ismaterial}}</option>
+                        <option value="No">No</option>
                         {% else %}
+                        <option value="Si">Si</option>
                         <option value="{{item.ismaterial}}"selected>{{item.ismaterial}}</option>
                         {% endif %}
                       </select>
@@ -88,7 +99,9 @@
                         <option value="">Selecciona la Asesoria</option>
                         {% if item.isredagua == "Si" %}
                         <option value="{{item.isredagua}}" selected>{{item.isredagua}}</option>
+                        <option value="No">No</option>
                         {% else %}
+                        <option value="Si">Si</option>
                         <option value="{{item.isredagua}}"selected>{{item.isredagua}}</option>
                         {% endif %}
                       </select>
@@ -99,7 +112,9 @@
                         <option value="">Selecciona la Asesoria</option>
                         {% if item.isluminaria == "Si" %}
                         <option value="{{item.isluminaria}}" selected>{{item.isluminaria}}</option>
+                        <option value="No">No</option>
                         {% else %}
+                        <option value="Si">Si</option>
                         <option value="{{item.isluminaria}}"selected>{{item.isluminaria}}</option>
                         {% endif %}
                       </select>
@@ -110,7 +125,9 @@
                         <option value="">Selecciona la Asesoria</option>
                         {% if item.isseguro == "Si" %}
                         <option value="{{item.isseguro}}" selected>{{item.isseguro}}</option>
+                        <option value="No">No</option>
                         {% else %}
+                        <option value="Si">Si</option>
                         <option value="{{item.isseguro}}"selected>{{item.isseguro}}</option>
                         {% endif %}
                       </select>
@@ -121,7 +138,9 @@
                         <option value="">Selecciona la Asesoria</option>
                         {% if item.istrabajoseguro == "Si" %}
                         <option value="{{item.istrabajoseguro}}" selected>{{item.istrabajoseguro}}</option>
+                        <option value="No">No</option>
                         {% else %}
+                        <option value="Si">Si</option>
                         <option value="{{item.istrabajoseguro}}"selected>{{item.istrabajoseguro}}</option>
                         {% endif %}
                       </select>

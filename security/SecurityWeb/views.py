@@ -244,8 +244,7 @@ def check_list_index(request):
     }
     return render(request,'check-list-index.html',data)
 
-def check_list_modificar(request,idcheck):
-    # get_object_or_404(CheckList, pk=idcheck)
+def check_list_modificar(request,idcheck = None):
     try:
 
         check = CheckList.objects.filter(idcheck=idcheck)
@@ -258,11 +257,38 @@ def check_list_modificar(request,idcheck):
             'Razonsocial':cliente.razonsocial
         }
 
+        if request.POST:
+            isSeniales = request.POST.get("isSeniales")
+            isElemento = request.POST.get("isElemento")
+            isMaterial = request.POST.get("isMaterial")
+            isRedHidrica = request.POST.get("isRedHidrica")
+            isIluminaria = request.POST.get("isIluminaria")
+            isSeguroEmp = request.POST.get("isSeguroEmp")
+            isPlanSeg = request.POST.get("isPlanSeg")
+            descripcion = request.POST.get("descripcion")
+            fecha_registro = datetime.now()
+
+            
+            try:
+                check = CheckList.objects.get(idcheck=idcheck)
+                check.isseniales = isSeniales
+                check.iselementoseguridad = isElemento
+                check.ismaterial = isMaterial
+                check.isredagua = isRedHidrica
+                check.isluminaria = isIluminaria
+                check.isseguro = isSeguroEmp
+                check.istrabajoseguro = isPlanSeg
+                check.fecharegistro = fecha_registro
+                check.descripcion = descripcion
+                check.save()
+                data['mensaje'] = 'Check List Modificado'
+
+            except:
+                data['mensaje'] = 'Error al Modificar Checkk List'
+
         return render(request,'check-list-modificar.html',data)
-    except CheckList.DoesNotExist:
-        return render(request,'check-list-modificar.html',{'error':'error'})
-
-
+    except:
+        return render(request,'Error/error.html',{'error':'Error 405 Data not Found.', 'id': 'El ID Check List No existe : '+str(idcheck)})
 
 #----------------- Listado -----------------
 def agregar_usuario(rutCliente, razonSocial, numeroContacto,rubro,correo,contrasena):
