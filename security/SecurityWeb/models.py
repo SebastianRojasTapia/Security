@@ -10,17 +10,17 @@ from django.db import models
 
 class Actividad(models.Model):
     idactividad = models.BigAutoField(primary_key=True)
-    descripcion = models.TextField()  # This field type is a guess.
-    fechainicio = models.DateField()  # This field type is a guess.
-    fechatermino = models.DateField()  # This field type is a guess.
-    horainicio = models.TimeField()  # This field type is a guess.
-    horatermino = models.TimeField()  # This field type is a guess.
+    descripcion = models.TextField(blank=True, null=True)  # This field type is a guess.
+    fechainicio = models.DateField(blank=True, null=True)  # This field type is a guess.
+    fechatermino = models.DateField(blank=True, null=True)  # This field type is a guess.
+    horainicio = models.TimeField(blank=True, null=True)  # This field type is a guess.
+    horatermino = models.TimeField(blank=True, null=True)  # This field type is a guess.
     cantidadasistente = models.BigIntegerField(blank=True, null=True)
     fecharegistro = models.DateField(blank=True, null=True)  # This field type is a guess.
     direccion = models.TextField(blank=True, null=True)  # This field type is a guess.
     idtipoactividad = models.ForeignKey('TipoActividad', models.DO_NOTHING, db_column='idtipoactividad')
     rutcliente = models.ForeignKey('Cliente', models.DO_NOTHING, db_column='rutcliente')
-    rutprofesional = models.ForeignKey('Profesional', models.DO_NOTHING, db_column='rutprofesional')
+    rutprofesional = models.ForeignKey('Profesional', models.DO_NOTHING, db_column='rutprofesional',blank=True, null=True)
     idcheck = models.ForeignKey('CheckList', models.DO_NOTHING, db_column='idcheck', blank=True, null=True)
 
     class Meta:
@@ -39,14 +39,14 @@ class CanalPago(models.Model):
 
 class CheckList(models.Model):
     idcheck = models.BigAutoField(primary_key=True)
-    isseniales = models.CharField(max_length=1, blank=True, null=True)
-    iselementoseguridad = models.CharField(max_length=1, blank=True, null=True)
-    ismaterial = models.CharField(max_length=1, blank=True, null=True)
-    isredagua = models.CharField(max_length=1, blank=True, null=True)
-    isluminaria = models.CharField(max_length=1, blank=True, null=True)
-    isseguro = models.CharField(max_length=1, blank=True, null=True)
-    istrabajoseguro = models.CharField(max_length=1, blank=True, null=True)
-    descripcion = models.TextField()  # This field type is a guess.
+    isseniales = models.TextField(max_length=2, blank=True, null=True)
+    iselementoseguridad = models.TextField(max_length=2, blank=True, null=True)
+    ismaterial = models.TextField(max_length=2, blank=True, null=True)
+    isredagua = models.TextField(max_length=2, blank=True, null=True)
+    isluminaria = models.TextField(max_length=2, blank=True, null=True)
+    isseguro = models.TextField(max_length=2, blank=True, null=True)
+    istrabajoseguro = models.TextField(max_length=2, blank=True, null=True)
+    descripcion = models.TextField(max_length=200)  # This field type is a guess.
     fecharegistro = models.DateField()  # This field type is a guess.
 
     class Meta:

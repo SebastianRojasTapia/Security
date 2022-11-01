@@ -198,8 +198,8 @@
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" class="nav-link">Bienvenido @{{user.username}}</a>
                 <ul class="dropdown-menu">
-                  <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
                   <li><a href="{% url 'perfil'%}" class="dropdown-item"><i class="fa-regular fa-user font-size-sm mr-2"></i>Perfil</a></i></li>
+                  <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
                 </ul>
               </li>       
               {% else %}
@@ -227,6 +227,7 @@
           <nav class="collapse navbar-collapse order-lg-2" id="navbarCollapse">
             <!-- Menu -->
             <ul class="navbar-nav mr-auto">
+              {% if user.is_authenticated %}
               <li class="nav-item">
                 <a href="{% url 'index' %}" class="nav-link">Inicio</a>
               </li>
@@ -243,10 +244,30 @@
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Solicitudes</a>
                 <ul class="dropdown-menu">
                   <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Asesoria</a></li>
-                  <li><a href="shop-single.html" class="dropdown-item">Single Product</a></li>
-                  <li><a href="checkout.html" class="dropdown-item">Checkout</a></li>
+                  <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Reporte</a></li>
                 </ul>
               </li>
+              <li class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Check List</a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'check' %}" class="nav-link">Ingresar Check List</a></li>
+                  <li><a href="{% url 'check_list_index' %}" class="dropdown-item">Listar Check List</a></li>
+                </ul>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a href="{% url 'index' %}" class="nav-link">Inicio</a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'misionVision' %}"class="nav-link">Mision y Visión</a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'plan' %}" class="nav-link">Plan</a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'contacto' %}" class="nav-link">Contáctanos</a>
+              </li>
+              {% endif %}
             </ul>
           </nav>
         </div>

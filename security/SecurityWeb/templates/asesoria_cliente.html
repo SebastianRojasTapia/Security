@@ -1,0 +1,125 @@
+{% extends "base.html" %}}
+
+{% load static %}
+{% block contenido %}
+<main class="cs-page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="bg-secondary mb-3" aria-label="breadcrumb">
+        <div class="container">
+            <ol class="breadcrumb breadcrumb-alt mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'index' %}"><i class="fa-solid fa-house"></i></a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">Inicio</li>
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-angle-right"></i>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Perfil</li>
+            </ol>
+            
+        </div>
+    </nav>
+
+      <!-- Page container -->
+      <section class="container pt-3 pt-lg-4 pb-5 pb-lg-6">
+        <div class="row pb-2 pb-lg-0">
+
+          <!-- Account menu (sticky sidebar) -->
+          <aside class="col-xl-3 col-lg-4 pb-3 mb-4 mb-lg-0">
+            <div class="sidebar-sticky" data-sidebar-sticky-options='{
+              "topSpacing": 120,
+              "minWidth": 991
+            }'>
+              <div class="sidebar-sticky-inner">
+                <div class="card">
+                  <div class="card-body">
+                    {% for c in solicitud %}
+                    <h5 class="card-title mb-1">{{c.1}}</h5>
+                    <p class="card-text text-muted mb-lg-0">{{c.5}}</p>
+                    {% endfor %}
+                    <a href="" class="btn btn-primary btn-block d-lg-none" data-toggle="collapse">Menú Cuenta</a>
+                  </div>
+                  <div id="account-menu" class="collapse d-lg-block">
+                    <div class="list-group list-group-flush border-top">
+                      <a href="{% url 'perfil' %}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="fa-regular fa-user font-size-sm mr-2"></i>
+                        <span>Mi Perfil</span>
+                      </a>
+                      <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="fas fa-file-contract font-size-sm mr-2"></i>
+                        <span>Contratos</span>
+                      </a>
+                      <a href="{% url 'asesoriaCliente' %}" class="list-group-item list-group-item-action d-flex align-items-center active">
+                        <i class="far fa-file font-size-sm mr-2"></i>
+                        <span>Registro de Asesoria</span>
+                        {% for c in count %}
+                        <span class="badge badge-warning ml-auto">{{c.0}}</span>
+                        {% endfor %}
+                      </a>
+                      <a href="" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="fas fa-chart-line font-size-sm mr-2"></i>
+                        <span>Reportes</span>
+                      </a>
+                      <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="fas fa-sign-out-alt font-size-sm mr-2"></i>
+                        <span>Salir</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Content -->
+          <div class="col-lg-8 ml-auto">
+            <div class="d-flex align-items-center justify-content-between mb-4 pb-1 pb-sm-3">
+              <h1 class="h2 mb-0">Registro de Asesoria</h1>
+            </div>
+            <!-- Basic table -->
+            <div class="table-responsive" style="white-space: nowrap; overflow-x: auto;">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Nº</th>
+                    <th>Descripcion</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Termino</th>
+                    <th>Hora Inicio</th>
+                    <th>Hora Termino</th>
+                    <th>Cant. Personas</th>
+                    <th>Dirección</th>
+                    <th>Actividad</th>
+                    <th>Profesional</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {% for c in asesoria %}
+                  <tr>
+                    <th>{{c.0}}</th>
+                    <th>{{c.1}}</th>
+                    <th>{{c.2}}</th>
+                    <th>{{c.3}}</th>
+                    <th>{{c.4}}</th>
+                    <th>{{c.5}}</th>
+                    <th>{{c.6}}</th>
+                    <th>{{c.7}}</th>
+                    <th>{{c.8}}</th>
+                    <th><span class="badge bg-warning" style="color: white;">{{c.9}}</span></th>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            
+            <div style="text-align: center; color: blue; font-size: 25px; ">
+                <h3>{{mensaje}}</h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
+</main>
+{% endblock contenido %}

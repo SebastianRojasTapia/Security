@@ -1,0 +1,148 @@
+{% extends "base.html" %}}
+
+{% load static %}
+{% block contenido %}
+<main class="cs-page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="bg-secondary mb-3" aria-label="breadcrumb">
+        <div class="container">
+            <ol class="breadcrumb breadcrumb-alt mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'index' %}"><i class="fa-solid fa-house"></i></a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">Inicio</li>
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-angle-right"></i>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Check List</li>
+            </ol>
+            
+        </div>
+    </nav>
+
+      <!-- Page container -->
+      <section class="container pt-3 pt-lg-4 pb-5 pb-lg-6">
+        <div class="row pb-2 pb-lg-0">
+
+        
+          <!-- Content -->
+          <div class="col-lg-12 ml-auto">
+            <div class="d-flex align-items-center justify-content-between mb-4 pb-1 pb-sm-3">
+              <h1 class="h2 mb-0">Check List</h1>
+            </div>
+            <div class="mb-4 pb-1 pb-sm-3">
+                <i class="fa-sharp fa-solid fa-circle-exclamation" style="color: red;"></i><strong style="color: black;"> Selección Unica</strong></span>
+              </div>
+            
+            <!-- <form action="{% url 'check_modificar'%}" method="POST"> -->
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-lg-6 mb-4 form-group">
+                    <label for="ac-fn"><i class="fa-regular fa-user"></i> Usuario Cliente</label>
+                    <input type="text" class="form-control form-control-lg" name="UsuarioCliente" id="UsuarioCliente" required value="{{Razonsocial}}" readonly></textarea>
+                </div>
+            </div>
+
+            <div class="row pb-3">
+                
+                {% for item in checklist %}
+                
+                <div class="col-lg-6 mb-4">
+                    <label for="signin-email">1. <i class="fa-solid fa-triangle-exclamation"></i> Existe Señaletica</label>
+                    <select class="form-control" aria-label=".form-select-sm example" name="isSeniales" id="isSeniales" required>
+                        <option value="">Selecciona la Asesoria</option>
+                        {% if item.isseniales == "Si" %}
+                        <option value="{{item.isseniales}}" selected>{{item.isseniales}}</option>
+                        {% else %}
+                        <option value="{{item.isseniales}}"selected>{{item.isseniales}}</option>
+                        {% endif %}
+                      </select>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <label for="signin-email">2. <i class="fa-solid fa-helmet-safety"></i> Existe Elementos de Seguridad</label>
+                    <select class="form-control" aria-label=".form-select-sm example" name="isElemento" id="isElemento" required>
+                        <option value="">Selecciona la Asesoria</option>
+                        {% if item.iselementoseguridad == "Si" %}
+                        <option value="{{item.iselementoseguridad}}" selected>{{item.iselementoseguridad}}</option>
+                        {% else %}
+                        <option value="{{item.iselementoseguridad}}"selected>{{item.iselementoseguridad}}</option>
+                        {% endif %}
+                      </select>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <label for="signin-email">3. <i class="fa-solid fa-biohazard"></i> Existe Material Peligroso</label>
+                    <select class="form-control" aria-label=".form-select-sm example" name="isMaterial" id="isMaterial" required>
+                        <option value="">Selecciona la Asesoria</option>
+                        {% if item.ismaterial == "Si" %}
+                        <option value="{{item.ismaterial}}" selected>{{item.ismaterial}}</option>
+                        {% else %}
+                        <option value="{{item.ismaterial}}"selected>{{item.ismaterial}}</option>
+                        {% endif %}
+                      </select>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <label for="signin-email">4. <i class="fa-solid fa-fire-extinguisher"></i> Existe Red Hidrica</label>
+                    <select class="form-control" aria-label=".form-select-sm example" name="isRedHidrica" id="isRedHidrica" required>
+                        <option value="">Selecciona la Asesoria</option>
+                        {% if item.isredagua == "Si" %}
+                        <option value="{{item.isredagua}}" selected>{{item.isredagua}}</option>
+                        {% else %}
+                        <option value="{{item.isredagua}}"selected>{{item.isredagua}}</option>
+                        {% endif %}
+                      </select>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <label for="signin-email">5. <i class="fa-regular fa-lightbulb"></i> Existe Iluminaria </label>
+                    <select class="form-control" aria-label=".form-select-sm example" name="isIluminaria" id="isIluminaria" required>
+                        <option value="">Selecciona la Asesoria</option>
+                        {% if item.isluminaria == "Si" %}
+                        <option value="{{item.isluminaria}}" selected>{{item.isluminaria}}</option>
+                        {% else %}
+                        <option value="{{item.isluminaria}}"selected>{{item.isluminaria}}</option>
+                        {% endif %}
+                      </select>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <label for="signin-email">6. <i class="fa-solid fa-user-shield"></i> Existe Seguro Adicional al empleado</i></label>
+                    <select class="form-control" aria-label=".form-select-sm example" name="isSeguroEmp" id="isSeguroEmp" required>
+                        <option value="">Selecciona la Asesoria</option>
+                        {% if item.isseguro == "Si" %}
+                        <option value="{{item.isseguro}}" selected>{{item.isseguro}}</option>
+                        {% else %}
+                        <option value="{{item.isseguro}}"selected>{{item.isseguro}}</option>
+                        {% endif %}
+                      </select>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <label for="signin-email">7. <i class="fa-solid fa-diagram-project"></i> Existe un Plan de Seguridad </label>
+                    <select class="form-control" aria-label=".form-select-sm example" name="isPlanSeg" id="isPlanSeg" required>
+                        <option value="">Selecciona la Asesoria</option>
+                        {% if item.istrabajoseguro == "Si" %}
+                        <option value="{{item.istrabajoseguro}}" selected>{{item.istrabajoseguro}}</option>
+                        {% else %}
+                        <option value="{{item.istrabajoseguro}}"selected>{{item.istrabajoseguro}}</option>
+                        {% endif %}
+                      </select>
+                </div>
+
+                <div class="col-lg-6 mb-4 form-group">
+                    <label for="ac-fn">8. <i class="fa-solid fa-comment"></i> Comentario </label>
+                    <textarea class="form-control form-control-lg" name="descripcion" id="descripcion" required>{{item.descripcion}}</textarea>
+                </div>
+    
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-lg">&nbsp;Modificar Check List&nbsp;</button>
+            </form>
+            <div style="text-align: center; color: blue; font-size: 25px; ">
+                <h3>{{mensaje}}</h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+</main>
+{% endblock contenido %}

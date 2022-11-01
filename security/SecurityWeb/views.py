@@ -6,14 +6,16 @@ from pydoc import describe
 from re import U, template
 from sqlite3 import Date
 import string
+from tkinter import EXCEPTION
 from traceback import print_tb
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 # adjuntamos la libreria de autenticar 
 from django.contrib.auth import authenticate,logout,login as login_autent
 #agregar decorador para impedir el ingreso a las paginas sin estar registrado
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import connection
+from .models import Actividad, CheckList, Cliente
 
 import cx_Oracle #para ocupar varibles de oracle
 import requests #llamados de api C#
@@ -79,7 +81,8 @@ def login(request):
   
 def contacto(request):
     return render(request,'contacto.html')
-    
+
+@login_required(login_url='/login/')
 def plan(request):
     user = request.user.get_username()
     dataMsg = {}
@@ -119,11 +122,10 @@ def plan(request):
             montoPago = data['montoPago']
             message = data['message']
             fechaRegistro = data['fechaRegistro']
-            print(fechaRegistro)
+            # Format la fecha para el ingreso a base de datos
             fechaRegistro = fechaRegistro.replace("T","")
             fechaRegistro = fechaRegistro[:-14]
-            print(fechaRegistro)
-
+      
             salida = SP_CONTRATO_PAGO(user,fechaRegistro,montoPago,canalPago,idcomprobante,descripcion)
             if salida == 1:
                 dataMsg['mensaje'] = message
@@ -135,12 +137,39 @@ def plan(request):
 def visionMision(request):
     return render(request,'vision-mision.html')
 
+@login_required(login_url='/login/')
 def asesoria(request):
-    return render(request,'asesoria.html')
+    data = {
+        'tipo_actividad':listar_tipo_actividad()
+    }
+    user = request.user.get_username()
+    if request.method == 'POST':
+        idTipoAsesoria = request.POST.get('tip_asesoria')
+        descripcion = request.POST.get('descripcion')
+        fecha_inicio = request.POST.get('fecha_inicio')
+        fecha_termino = request.POST.get('fecha_termino')
+        hora_inicio = request.POST.get('hora_inicio')
+        hora_inicio = fecha_inicio+' '+hora_inicio
+        hora_termino = request.POST.get('hora_termino')
+        hora_termino = fecha_termino+' '+hora_termino
+        cant_asistentes = request.POST.get('cant_asistentes')
+        direccion = request.POST.get('direccion')
+        fecha_registro = datetime.now()
 
+        salida = SP_INGRESAR_SOLICITUD(descripcion,fecha_inicio,fecha_termino,hora_inicio,hora_termino,cant_asistentes,fecha_registro,direccion,user,idTipoAsesoria)
+        if salida == 1:
+            data['mensaje'] = 'Solicitud Ingresada'
+        else:
+            data['mensaje'] = 'Error al ingresar solicitud'
+
+    return render(request,'asesoria.html',data)
+
+@login_required(login_url='/login/')
 def perfil(request):
     user = request.user.get_username()
-    data = {'solicitud':listar_usuario(user)}
+    data = {'solicitud':listar_usuario(user),
+            'count':count_asesoria_cliente(user)
+    }
     if request.method == 'POST':
         correo = request.POST.get('email')
         telefono = request.POST.get('telefono')
@@ -170,6 +199,71 @@ def perfil(request):
                 data['mensaje'] = 'No se ha podido modificar'
     return render(request,'perfil.html',data)
 
+@login_required(login_url='/login/')
+def asesoriaCliente(request):
+    user = request.user.get_username()
+    data = {
+        'solicitud':listar_usuario(user),
+        'asesoria':listar_asesoria_cliente(user),
+        'count':count_asesoria_cliente(user)
+    }
+    return render(request,'asesoria_cliente.html',data)
+
+@login_required(login_url='/login/')
+def checklist(request):
+    user = request.user.get_username()
+    data = {
+        'solicitud':listar_usuario(user)
+    }
+
+    if request.POST:
+        usuarioCliente = request.POST.get("UsuarioCliente")
+        isSeniales = request.POST.get("isSeniales")
+        isElemento = request.POST.get("isElemento")
+        isMaterial = request.POST.get("isMaterial")
+        isRedHidrica = request.POST.get("isRedHidrica")
+        isIluminaria = request.POST.get("isIluminaria")
+        isSeguroEmp = request.POST.get("isSeguroEmp")
+        isPlanSeg = request.POST.get("isPlanSeg")
+        descripcion = request.POST.get("descripcion")
+        fecha_registro = datetime.now()
+
+        salida = SP_INGRESAR_CHECKLIST(usuarioCliente,isSeniales,isElemento,isMaterial,isRedHidrica,isIluminaria,isSeguroEmp,isPlanSeg,descripcion,fecha_registro)
+        if salida == 1:
+            data['mensaje'] = 'Check List Ingresado Correctamente.'
+        else:
+            data['mensaje'] = 'Error al Check List'
+        
+    return render(request,'check-list.html',data)
+
+@login_required(login_url='/login/')
+def check_list_index(request):
+    checklist = CheckList.objects.all()
+    data = {
+        'checklist':checklist
+    }
+    return render(request,'check-list-index.html',data)
+
+def check_list_modificar(request,idcheck):
+    # get_object_or_404(CheckList, pk=idcheck)
+    try:
+
+        check = CheckList.objects.filter(idcheck=idcheck)
+        actividad = Actividad.objects.get(idcheck = idcheck)
+        rutCliente = actividad.rutcliente
+        cliente = Cliente.objects.get(rutcliente = rutCliente.rutcliente)
+
+        data = {
+            'checklist':check,
+            'Razonsocial':cliente.razonsocial
+        }
+
+        return render(request,'check-list-modificar.html',data)
+    except CheckList.DoesNotExist:
+        return render(request,'check-list-modificar.html',{'error':'error'})
+
+
+
 #----------------- Listado -----------------
 def agregar_usuario(rutCliente, razonSocial, numeroContacto,rubro,correo,contrasena):
     django_cursor = connection.cursor()
@@ -198,6 +292,43 @@ def SP_CONTRATO_PAGO(razonSocial, fechaRegistro, montoPago, idCanalPago, idCompr
     salida = cursor.var(cx_Oracle.NUMBER)
     cursor.callproc("SP_PAGO_CONTRATO",[razonSocial, fechaRegistro, montoPago, idCanalPago, idComprobantePago, descripcion, salida])
     return salida.getvalue()
+
+def SP_INGRESAR_SOLICITUD(descripcion, fecha_inicio, fecha_termino, hora_inicio, hora_termino, cantAsistente, fecha_registro, direccion, razonSocial, idTipo):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    salida = cursor.var(cx_Oracle.NUMBER)
+    cursor.callproc("SP_INGRESAR_SOLICITUD",[descripcion, fecha_inicio, fecha_termino, hora_inicio, hora_termino, cantAsistente, fecha_registro, direccion, razonSocial, idTipo, salida])
+    return salida.getvalue()
+
+def SP_INGRESAR_CHECKLIST(razonSocial,isSeniales,isElemento,isMaterial,isRedHidrica,isIluminaria,isSeguroEmp,isPlanSeg,descripcion,fecha_registro):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    salida = cursor.var(cx_Oracle.NUMBER)
+    cursor.callproc("SP_INGRESAR_CHECKLIST",[razonSocial,isSeniales,isElemento,isMaterial,isRedHidrica,isIluminaria,isSeguroEmp,isPlanSeg,descripcion,fecha_registro,salida])
+    return salida.getvalue()
+
+
+def listar_asesoria_cliente(user):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor() #llama 
+    out_cur = django_cursor.connection.cursor() #recibe
+    cursor.callproc("SP_ASESORIACLIENTE",[user,out_cur])
+
+    lista = []
+    for fila in out_cur:
+        lista.append(fila)
+    return lista
+
+def count_asesoria_cliente(user):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor() #llama 
+    out_cur = django_cursor.connection.cursor() #recibe
+    cursor.callproc("SP_COUNT_ASESORIA",[user,out_cur])
+
+    lista = []
+    for fila in out_cur:
+        lista.append(fila)
+    return lista
 
 def listar_rubro():
     django_cursor = connection.cursor()
@@ -230,5 +361,4 @@ def listar_usuario(user):
     lista = []
     for fila in out_cur:
         lista.append(fila)
-        # print('\n'.join(map(str, lista)))
     return lista      
