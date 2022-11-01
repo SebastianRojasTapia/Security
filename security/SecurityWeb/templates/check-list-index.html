@@ -31,14 +31,26 @@
       <section class="container pt-3 pt-lg-4 pb-5 pb-lg-6">
         <div class="row pb-2 pb-lg-0">
 
-        
           <!-- Content -->
           <div class="col-lg-12 ml-auto">
             <div class="d-flex align-items-center justify-content-between mb-4 pb-1 pb-sm-3">
               <h1 class="h2 mb-0">Check List Listado</h1>
             </div>
+    
+            
           </div>
-
+          <form action="{% url 'check_list_index' %}" method="POST">
+            {% csrf_token %}
+            <div class="col-lg-12 ml-auto mb-3">
+                <label for="ac-fn"><i class="fa-solid fa-magnifying-glass"></i></i> Buscar ID</label>
+                <div class="input-group">
+                  <input type="text" class="form-control form-control-lg" name="id" id="id" placeholder="Ingrese el ID"></input>
+                  <button type="submit" class="btn btn-primary">&nbsp;Buscar&nbsp;</button>
+                </div>
+            </div>
+              
+            </form>
+          
           <div class="col-lg-12 ml-auto">
             <!-- Basic table -->
             <div class="table-responsive-sm">

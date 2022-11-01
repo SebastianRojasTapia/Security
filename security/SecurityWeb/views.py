@@ -242,6 +242,16 @@ def check_list_index(request):
     data = {
         'checklist':checklist
     }
+    try:
+        if request.POST:
+            id = request.POST.get("id")
+            checklist = CheckList.objects.filter(idcheck=id)
+            data['checklist'] = checklist
+            return render(request,'check-list-index.html',data)
+    except:
+        checklist = CheckList.objects.all()
+        data['checklist'] = checklist
+        return render(request,'check-list-index.html',data)
     return render(request,'check-list-index.html',data)
 
 def check_list_modificar(request,idcheck = None):
@@ -267,7 +277,6 @@ def check_list_modificar(request,idcheck = None):
             isPlanSeg = request.POST.get("isPlanSeg")
             descripcion = request.POST.get("descripcion")
             fecha_registro = datetime.now()
-
             
             try:
                 check = CheckList.objects.get(idcheck=idcheck)
@@ -284,7 +293,7 @@ def check_list_modificar(request,idcheck = None):
                 data['mensaje'] = 'Check List Modificado'
 
             except:
-                data['mensaje'] = 'Error al Modificar Checkk List'
+                data['mensaje'] = 'Error al Modificar Check List'
 
         return render(request,'check-list-modificar.html',data)
     except:
