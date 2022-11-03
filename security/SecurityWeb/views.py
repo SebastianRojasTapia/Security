@@ -149,9 +149,11 @@ def asesoria(request):
         fecha_inicio = request.POST.get('fecha_inicio')
         fecha_termino = request.POST.get('fecha_termino')
         hora_inicio = request.POST.get('hora_inicio')
-        hora_inicio = fecha_inicio+' '+hora_inicio
+        if hora_inicio is not None:
+            hora_inicio = fecha_inicio+' '+hora_inicio
         hora_termino = request.POST.get('hora_termino')
-        hora_termino = fecha_termino+' '+hora_termino
+        if hora_termino is not None:
+            hora_termino = fecha_termino+' '+hora_termino
         cant_asistentes = request.POST.get('cant_asistentes')
         direccion = request.POST.get('direccion')
         fecha_registro = datetime.now()
@@ -238,18 +240,18 @@ def checklist(request):
 
 @login_required(login_url='/login/')
 def check_list_index(request):
-    checklist = CheckList.objects.all()
+    checklist = CheckList.objects.all().order_by('idcheck')
     data = {
         'checklist':checklist
     }
     try:
         if request.POST:
             id = request.POST.get("id")
-            checklist = CheckList.objects.filter(idcheck=id)
+            checklist = CheckList.objects.filter(idcheck=id).order_by('idcheck')
             data['checklist'] = checklist
             return render(request,'check-list-index.html',data)
     except:
-        checklist = CheckList.objects.all()
+        checklist = CheckList.objects.all().order_by('idcheck')
         data['checklist'] = checklist
         return render(request,'check-list-index.html',data)
     return render(request,'check-list-index.html',data)
