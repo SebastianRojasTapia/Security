@@ -1,0 +1,58 @@
+{% extends "base.html" %}}
+
+{% load static %}
+{% block contenido %}
+<main class="cs-page-wrapper">
+
+  <!-- Breadcrumb -->
+  <nav class="bg-secondary mb-3" aria-label="breadcrumb">
+    <div class="container">
+
+        <ol class="breadcrumb breadcrumb-alt mb-0">
+        <li class="breadcrumb-item">
+            <a href="{% url 'index' %}"><i class="fa-solid fa-house"></i></a>
+        </li>
+        <li class="breadcrumb-item" aria-current="page">Inicio</li>
+        <li class="breadcrumb-item">
+            <i class="fa-solid fa-angle-right"></i>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Sala de Comunicaciones</li>
+        </ol>
+        
+    </div>
+  </nav>
+
+  <section class="container pt-3 pt-lg-4 pb-5 pb-lg-6">
+    <div class="row pb-2 pb-lg-0">
+
+    
+      <!-- Content -->
+      <div class="col-lg-4 ">
+        <div class="d-flex align-items-center justify-content-between mb-4 pb-1 pb-sm-3">
+          <h1 class="h2 mb-0">Sala de Comunicaciones</h1>
+        </div>
+        <form id="post-form" method="POST" action="checkview">
+        {% csrf_token %}
+       
+        <div class="row pb-3">
+        
+            <div class="col-sm-8 form-group">
+                <label for="ac-fn">Nombre Sala</label>
+                <input type="text" class="form-control form-control-lg" name="room_name" id="room_name" required>
+            </div>
+            <div class="col-sm-8 form-group">
+                <label for="ac-fn">Usuario</label>
+                <input type="text" class="form-control form-control-lg" name="username" id="username" required>
+            </div>
+
+        </div>
+        <button type="submit" class="btn btn-primary">&nbsp;Ingresar a la Sala&nbsp;</button>
+        </form>
+        <div style="text-align: center; color: blue; font-size: 25px; ">
+            <h3>{{mensaje}}</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock contenido %}

@@ -6,6 +6,8 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from datetime import datetime
+
 
 
 class Actividad(models.Model):
@@ -164,7 +166,7 @@ class TipoActividad(models.Model):
 
 
 class Usuario(models.Model):
-    idusuario = models.BigAutoField(primary_key=True)
+    idusuario = models.AutoField(primary_key=True)
     correo = models.TextField()  # This field type is a guess.
     contrasenahashed = models.TextField()  # This field type is a guess.
     ishabilitado = models.CharField(max_length=1)
@@ -176,3 +178,22 @@ class Usuario(models.Model):
         managed = False
         db_table = 'usuario'
 
+# Create your models here.
+class Room(models.Model):
+    sala = models.CharField(max_length=1000,primary_key=True)
+    
+    class Meta:
+        managed = False
+        db_table = 'room'
+
+
+class Message(models.Model):
+    idmessage = models.BigAutoField(primary_key=True)
+    valor = models.CharField(max_length=1000000)
+    datetime = models.DateField(blank=True)
+    username = models.CharField(max_length=1000000)
+    room = models.CharField(max_length=1000000)
+
+    class Meta:
+        managed = False
+        db_table = 'message'

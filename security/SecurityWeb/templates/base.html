@@ -8,9 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Favicon and Touch Icons-->
 
-  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'dist/img/shield_32.png'%}">
-  <!-- <link rel="icon" type="image/png" sizes="16x16" href="{% static 'dist/img/favicon-16x16.png'%}"> -->
-  <link rel="mask-icon" color="#5bbad5" href="{% static 'dist/img/safari-pinned-tab.svg'%}">
+  <link rel="icon" sizes="32x32" href="{% static 'dist/img/shield_32.png'%}">
+
   <meta name="msapplication-TileColor" content="#766df4">
   <meta name="theme-color" content="#ffffff">
 
@@ -247,6 +246,7 @@
                   <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Reporte</a></li>
                 </ul>
               </li>
+              {% if perms.SecurityWeb.add_check %}
               <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Check List</a>
                 <ul class="dropdown-menu">
@@ -254,6 +254,18 @@
                   <li><a href="{% url 'check_list_index' %}" class="dropdown-item">Listar Check List</a></li>
                 </ul>
               </li>
+              <li class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Check List</a>
+                <ul class="dropdown-menu">
+                  <a href="{% url 'home' %}" class="nav-link">Sala Comunicaciones</a>
+                </ul>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a href="{% url 'home' %}" class="nav-link">Sala Comunicaciones</a>
+              </li>
+              {% endif %}
+              
               {% else %}
               <li class="nav-item">
                 <a href="{% url 'index' %}" class="nav-link">Inicio</a>
@@ -384,7 +396,9 @@
   <script src="{% static 'dist/vendor/jquery/dist/jquery.slim.min.js'%}"></script>
   <script src="{% static 'dist/vendor/bootstrap/dist/js/bootstrap.bundle.min.js'%}"></script>
   <script src="{% static 'dist/vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js'%}"></script>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
+  <!-- <script src="{% static 'dist/js/main.js'%}"></script> -->
   <script src="{% static 'dist/js/simplebar.min.js'%}"></script>
   <script src="{% static 'dist/js/nouislider.min.js'%}"></script>
   <script src="{% static 'dist/js/smooth-scroll.polyfills.min.js'%}"></script>
