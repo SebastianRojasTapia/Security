@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate,logout,login as login_autent
 #agregar decorador para impedir el ingreso a las paginas sin estar registrado
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import connection
-from .models import Actividad, CheckList, Cliente, Room, Message, Profesional
+from .models import Actividad, CheckList, Cliente, Room, Message, Profesional, Usuario
 
 from django.http import HttpResponse, JsonResponse
 
@@ -146,49 +146,62 @@ def logout_vista(request):
 def contratar(request):
     user = request.user.get_username()
     dataMsg = {}
-    if request.method == 'POST':
-        url = "https://localhost:7000/ComprobantePago/SaveComprobante"
+    try:
+        if request.method == 'POST':
+            url = "https://localhost:7000/ComprobantePago/SaveComprobante"
 
-        numeroTarjeta = request.POST.get('numeroTarjeta')
-        nombreTitular = request.POST.get('nombreTitular')
-        mes = request.POST.get('mes')
-        anio = request.POST.get('anio')
-        fechaValida = mes+anio
-        cvv = request.POST.get('cvv')
-        monto = 60
-        tipoMoneda = "CH"
-        canalPago = 1
-        descripcion = "Contratacion de Plan"
+            numeroTarjeta = request.POST.get('numeroTarjeta')
+            nombreTitular = request.POST.get('nombreTitular')
+            mes = request.POST.get('mes')
+            anio = request.POST.get('anio')
+            fechaValida = mes+anio
+            cvv = request.POST.get('cvv')
+            monto = 60
+            tipoMoneda = "CH"
+            canalPago = 1
+            descripcion = "Contratacion de Plan"
 
-        headers = {'Content-Type': 'application/json'}
+            headers = {'Content-Type': 'application/json'}
 
-        payload = json.dumps({
-            'numeroTarjeta':numeroTarjeta,
-            'nombreTitular':nombreTitular,
-            'fechaValida':fechaValida,
-            'monto':monto,
-            'tipoMoneda':tipoMoneda,
-            'cvv':cvv
-        })
-        
-        response = requests.request("POST", url, headers=headers, data=payload, verify=False )
+            payload = json.dumps({
+                'numeroTarjeta':numeroTarjeta,
+                'nombreTitular':nombreTitular,
+                'fechaValida':fechaValida,
+                'monto':monto,
+                'tipoMoneda':tipoMoneda,
+                'cvv':cvv
+            })
+            
+            response = requests.request("POST", url, headers=headers, data=payload, verify=False )
+            print(response.text)
+            if response.status_code == 200:
+                data = json.loads(response.content.decode('utf-8'))
 
-        if response.status_code == 200:
-            data = json.loads(response.content.decode('utf-8'))
+                idcomprobante = data['idcomprobante']
+                montoPago = data['montoPago']
+                message = data['message']
+                fechaRegistro = data['fecharegistro']
+                # Format la fecha para el ingreso a base de datos
+                fechaRegistro = fechaRegistro.replace("T","")
+                fechaRegistro = fechaRegistro[:-14]
+                
+                salida = SP_CONTRATO_PAGO(user,fechaRegistro,montoPago,canalPago,idcomprobante,descripcion)
+                if salida == 1:
+                    dataMsg['mensaje'] = message
+                    u = User.objects.get(username=user)
+                    url = f"https://localhost:7000/MailSender/SendPaymentEmail?emailFrom=soporte@security.com&emailTo={u.email}&nameTo={nombreTitular}&paymentData=Monto Cancelado: {monto}"
 
-            idcomprobante = data['idcomprobante']
-            montoPago = data['montoPago']
-            message = data['message']
-            fechaRegistro = data['fechaRegistro']
-            # Format la fecha para el ingreso a base de datos
-            fechaRegistro = fechaRegistro.replace("T","")
-            fechaRegistro = fechaRegistro[:-14]
-      
-            salida = SP_CONTRATO_PAGO(user,fechaRegistro,montoPago,canalPago,idcomprobante,descripcion)
-            if salida == 1:
-                dataMsg['mensaje'] = message
-            else:
-                dataMsg['mensaje'] = 'Error al contratar el plan'
+                    payload = {}
+                    headers = {}
+
+                    response = requests.request("POST", url, headers=headers, data=payload, verify=False )
+
+                    print(response.text)
+                else:
+                    dataMsg['mensaje'] = 'Error al contratar el plan'
+    except:
+        dataMsg['mensaje'] = 'Error al conectar al servidor'
+        return render(request,'plan.html',dataMsg)
 
     return render(request,'plan.html',dataMsg)
 
@@ -221,7 +234,7 @@ def asesoria(request):
             sala = room
             )
             new_room.save()
-            data['sala'] = "Se creo tu sala con exito : " + room
+            data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
 
         salida = SP_INGRESAR_SOLICITUD(descripcion,fecha_inicio,fecha_termino,hora_inicio,hora_termino,cant_asistentes,fecha_registro,direccion,user,idTipoAsesoria)
         if salida == 1:
@@ -273,6 +286,7 @@ def asesoriaCliente(request):
         'asesoria':listar_asesoria_cliente(user),
         'count':count_asesoria_cliente(user)
     }
+    print(data['asesoria'])
     return render(request,'asesoria_cliente.html',data)
 
 @login_required(login_url='/login/')
@@ -305,13 +319,55 @@ def checklist(request):
         descripcion = request.POST.get("descripcion")
         fecha_registro = datetime.now()
 
-        salida = SP_INGRESAR_CHECKLIST(usuarioCliente,isSeniales,isElemento,isMaterial,isRedHidrica,isIluminaria,isSeguroEmp,isPlanSeg,descripcion,fecha_registro)
+        salida = SP_INGRESAR_CHECKLIST(usuarioCliente,user,isSeniales,isElemento,isMaterial,isRedHidrica,isIluminaria,isSeguroEmp,isPlanSeg,descripcion,fecha_registro)
         if salida == 1:
             data['mensaje'] = 'Check List Ingresado Correctamente.'
         else:
             data['mensaje'] = 'Error al Check List'
         
     return render(request,'check-list.html',data)
+
+permission_required('SecurityWeb.add_check',login_url='/login/')
+@login_required(login_url='/login/')
+def listado_actividad_profesional(request):
+    actividad = Actividad.objects.all().order_by('idactividad')
+    data = {
+        'actividad':actividad
+    }
+    try:
+        if request.POST:
+            id = request.POST.get("id")
+            actividad = Actividad.objects.filter(idactividad=id).order_by('idactividad')
+            data['actividad'] = actividad
+            return render(request,'actividad-index.html',data)
+    except:
+        actividad = Actividad.objects.all().order_by('idactividad')
+        data['actividad'] = actividad
+        return render(request,'actividad-index.html',data)
+    return render(request,'actividad-index.html',data)
+
+@permission_required('SecurityWeb.mod_check',login_url='/login/')
+@login_required(login_url='/login/')
+def asignarProfesional(request,idactividad = None):
+    try:
+        actividad = Actividad.objects.all().order_by('idactividad')
+        data = {
+            'actividad':actividad
+        }
+        user = request.user.get_username()
+        u = User.objects.get(username=user)
+        usuario = Usuario.objects.get(correo = u.email)
+        try:
+            salida = SP_ASIGNAR_PROFESIONAL(idactividad,usuario.rutprofesional.rutprofesional)
+            if salida == 1:
+                data['mensaje'] = 'Asignado Correctamente.'
+            else:
+                data['mensaje'] = 'Error al Asignar'
+        except:
+            data['mensaje'] = 'Error al asignar'
+        return render(request,'actividad-index.html',data)
+    except:
+        return render(request,'Error/error.html',{'error':'Error 405 Data not Found.', 'id': 'El ID Actividad No existe : '+str(idactividad)})
 
 @permission_required('SecurityWeb.add_check',login_url='/login/')
 @login_required(login_url='/login/')
@@ -381,8 +437,11 @@ def check_list_modificar(request,idcheck = None):
 
 @login_required(login_url='/login/')
 def listaChat(request):
-    room = Room.objects.all()
-    return render(request, 'chat/chat-index.html')
+    room = Room.objects.all().order_by('sala')
+    data ={
+        'sala':room
+    }
+    return render(request, 'chat/chat-index.html',data)
 
 @login_required(login_url='/login/')
 def home(request):
@@ -479,11 +538,18 @@ def SP_INGRESAR_SOLICITUD(descripcion, fecha_inicio, fecha_termino, hora_inicio,
     cursor.callproc("SP_INGRESAR_SOLICITUD",[descripcion, fecha_inicio, fecha_termino, hora_inicio, hora_termino, cantAsistente, fecha_registro, direccion, razonSocial, idTipo, salida])
     return salida.getvalue()
 
-def SP_INGRESAR_CHECKLIST(razonSocial,isSeniales,isElemento,isMaterial,isRedHidrica,isIluminaria,isSeguroEmp,isPlanSeg,descripcion,fecha_registro):
+def SP_INGRESAR_CHECKLIST(razonSocial,username,isSeniales,isElemento,isMaterial,isRedHidrica,isIluminaria,isSeguroEmp,isPlanSeg,descripcion,fecha_registro):
     django_cursor = connection.cursor()
     cursor = django_cursor.connection.cursor()
     salida = cursor.var(cx_Oracle.NUMBER)
-    cursor.callproc("SP_INGRESAR_CHECKLIST",[razonSocial,isSeniales,isElemento,isMaterial,isRedHidrica,isIluminaria,isSeguroEmp,isPlanSeg,descripcion,fecha_registro,salida])
+    cursor.callproc("SP_INGRESAR_CHECKLIST",[razonSocial,username,isSeniales,isElemento,isMaterial,isRedHidrica,isIluminaria,isSeguroEmp,isPlanSeg,descripcion,fecha_registro,salida])
+    return salida.getvalue()
+
+def SP_ASIGNAR_PROFESIONAL(idActividad,rutProfesional):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    salida = cursor.var(cx_Oracle.NUMBER)
+    cursor.callproc("SP_ASIGNAR_PROFESIONAL",[idActividad,rutProfesional,salida])
     return salida.getvalue()
 
 

@@ -1,0 +1,113 @@
+{% extends "base.html" %}}
+
+{% load static %}
+{% block contenido %}
+<style>
+  span{
+    color: white;
+  }
+</style>
+
+<main class="cs-page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="bg-secondary mb-3" aria-label="breadcrumb">
+        <div class="container">
+            <ol class="breadcrumb breadcrumb-alt mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'index' %}"><i class="fa-solid fa-house"></i></a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">Inicio</li>
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-angle-right"></i>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Listado Actividad</li>
+            </ol>
+            
+        </div>
+    </nav>
+
+      <!-- Page container -->
+      <section class="container pt-3 pt-lg-4 pb-5 pb-lg-6">
+        <div class="row pb-2 pb-lg-0">
+
+          <!-- Content -->
+          <div class="col-lg-12 ml-auto">
+            <div class="d-flex align-items-center justify-content-between mb-4 pb-1 pb-sm-3">
+              <h1 class="h2 mb-0">Listado Actividad</h1>
+            </div>
+    
+          </div>
+          <form action="{% url 'listadoActividad' %}" method="POST">
+            {% csrf_token %}
+            <div class="col-lg-12 ml-auto mb-3">
+                <label for="ac-fn"><i class="fa-solid fa-magnifying-glass"></i></i> Buscar ID</label>
+                <div class="input-group">
+                  <input type="text" class="form-control form-control-lg" name="id" id="id" placeholder="Ingrese el ID"></input>
+                  <button type="submit" class="btn btn-primary">&nbsp;Buscar&nbsp;</button>
+                </div>
+            </div>
+              
+            </form>
+          
+          <div class="col-lg-12 ml-auto">
+            <!-- Basic table -->
+            <div class="table-responsive-sm" style="white-space: nowrap; overflow-x: auto;">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th class="align-top" >ID</th>
+                    <th class="align-top" >Descripción</th>
+                    <th class="align-top" >Fecha Inicio</th>
+                    <th class="align-top" >Fecha Termino</th>
+                    <th class="align-top" >Hora Inicio</th>
+                    <th class="align-top" >Hora Termino</th>
+                    <th class="align-top" >Cantidad Pers.</th>
+                    <th class="align-top" >Fecha Registro</th>
+                    <th class="align-top" >Dirección</th>
+                    <th class="align-top" >Actividad</th>
+                    <th class="align-top" >Rut Cliente</th>
+                    <th class="align-top" >ID CheckList</th>
+                    <th class="align-top" >Opción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in actividad %}
+                  <tr>
+                    {% if item.rutprofesional == None %}
+                    <td>{{item.idactividad}}</td>
+                    <td>{{item.descripcion}}</td>
+                    <td>{{item.fechainicio}}</td>
+                    <td>{{item.fechatermino}}</td>
+                    <td>{{item.horainicio}}</td>
+                    <td>{{item.horatermino}}</td>
+                    <td>{{item.cantidadasistente}}</td>
+                    <td>{{item.fecharegistro}}</td>
+                    <td>{{item.direccion}}</td>
+                    <td>{{item.idtipoactividad.descripcion}}</td>
+                    <td>{{item.rutcliente.rutcliente}}</td>
+                    <td>{{item.idcheck.idcheck}}</td>
+
+                    
+                    <td>
+                      <div class="row">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                          <a href="{% url 'asignarProfesional' item.idactividad %}" type="button" class="btn btn-success btn-sm mb-2" >Asignar</a>
+                        </div>
+                      </div>
+                    </td>
+                    {% endif %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+        </div>
+        
+      </section>
+
+      <div style="text-align: center; color: blue; font-size: 25px; ">
+        <h3>{{mensaje}}</h3>
+      </div>
+</main>
+{% endblock contenido %}

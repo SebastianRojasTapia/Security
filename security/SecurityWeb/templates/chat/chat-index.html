@@ -39,95 +39,27 @@
     
             
           </div>
-          <form action="{% url 'check_list_index' %}" method="POST">
-            {% csrf_token %}
-            <div class="col-lg-12 ml-auto mb-3">
-                <label for="ac-fn"><i class="fa-solid fa-magnifying-glass"></i></i> Buscar ID</label>
-                <div class="input-group">
-                  <input type="text" class="form-control form-control-lg" name="id" id="id" placeholder="Ingrese el ID"></input>
-                  <button type="submit" class="btn btn-primary">&nbsp;Buscar&nbsp;</button>
-                </div>
-            </div>
-              
-            </form>
-          
+
           <div class="col-lg-12 ml-auto">
             <!-- Basic table -->
             <div class="table-responsive-sm">
               <table class="table align-middle">
                 <thead>
                   <tr>
-                    <th class="align-top" >ID</th>
-                    <th class="align-top" >Comentario</th>
-                    <th class="align-top" >Señaletica</th>
-                    <th class="align-top" >Seguridad</th>
-                    <th class="align-top" >Material Peligroso</th>
-                    <th class="align-top" >Red Hidrica</th>
-                    <th class="align-top" >Iluminaria</th>
-                    <th class="align-top" >Seguro ++</th>
-                    <th class="align-top" >Plan Seguridad</th>
-                    <th class="align-top" >Fecha Registro</th>
-                    <th class="align-top" >Opciones</th>
+                    <th class="align-top" >Nombre de Sala</th>
+                    <th class="align-top" >Ingresar</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {% for item in checklist %}
+                  {% for item in sala %}
                   <tr>
-                    
-                    <td>{{item.idcheck}}</td>
-                    <td>{{item.descripcion}}</td>
-                    
-                    {% if item.isseniales == "Si" %}
-                    <td><span class="badge bg-success">{{item.isseniales}}</span></td>
-                    {% else %}
-                    <td><span class="badge bg-danger">{{item.isseniales}}</span></td>
-                    {% endif %}
-
-                    {% if item.iselementoseguridad == "Si" %}
-                    <td><span class="badge bg-success">{{item.iselementoseguridad}}</span></td>
-                    {% else %}
-                    <td><span class="badge bg-danger">{{item.iselementoseguridad}}</span></td>
-                    {% endif %}
-
-                    {% if item.ismaterial == "Si" %}
-                    <td><span class="badge bg-success">{{item.ismaterial}}</span></td>
-                    {% else %}
-                    <td><span class="badge bg-danger">{{item.ismaterial}}</span></td>
-                    {% endif %}
-
-                    {% if item.isredagua == "Si" %}
-                    <td><span class="badge bg-success">{{item.isredagua}}</span></td>
-                    {% else %}
-                    <td><span class="badge bg-danger">{{item.isredagua}}</span></td>
-                    {% endif %}
-
-                    {% if item.isluminaria == "Si" %}
-                    <td><span class="badge bg-success">{{item.isluminaria}}</span></td>
-                    {% else %}
-                    <td><span class="badge bg-danger">{{item.isluminaria}}</span></td>
-                    {% endif %}
-
-                    {% if item.isseguro == "Si" %}
-                    <td><span class="badge bg-success">{{item.isseguro}}</span></td>
-                    {% else %}
-                    <td><span class="badge bg-danger">{{item.isseguro}}</span></td>
-                    {% endif %}
-
-                    {% if item.istrabajoseguro == "Si" %}
-                    <td><span class="badge bg-success">{{item.istrabajoseguro}}</span></td>
-                    {% else %}
-                    <td><span class="badge bg-danger">{{item.istrabajoseguro}}</span></td>
-                    {% endif %}
-                    <td>{{item.fecharegistro}}</td>
-                    
+                    <td>{{item.sala}}</td>
                     <td>
-                      <div class="row">
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                          <a href="{% url 'check_modificar' item.idcheck %}" type="button" class="btn btn-info btn-sm mb-2" >Modificar</a>
-                        </div>
+                      <p class="text-danger">Proximamente</p>
+                      <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                        <a href="#" type="button" class="btn btn-success btn-sm mb-2" >Ingresar</a>
                       </div>
                     </td>
-
                   </tr>
                   {% endfor %}
                 </tbody>

@@ -239,14 +239,15 @@
               <li class="nav-item">
                 <a href="{% url 'contacto' %}" class="nav-link">Contáctanos</a>
               </li>
+              {% if perms.SecurityWeb.add_check %}
               <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Solicitudes</a>
                 <ul class="dropdown-menu">
+                  <li><a href="{% url 'listadoActividad' %}" class="nav-link">Asignar Profesional</a></li>
                   <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Asesoria</a></li>
-                  <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Reporte</a></li>
+                  <li><a href="#" class="dropdown-item">Solicitar Reporte</a></li>
                 </ul>
               </li>
-              {% if perms.SecurityWeb.add_check %}
               <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Check List</a>
                 <ul class="dropdown-menu">
@@ -258,9 +259,17 @@
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Check List</a>
                 <ul class="dropdown-menu">
                   <a href="{% url 'home' %}" class="nav-link">Sala Comunicaciones</a>
+                  <li><a href="{% url 'listaChat' %}" class="dropdown-item">Listar Check List</a></li>
                 </ul>
               </li>
               {% else %}
+              <li class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Solicitudes</a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Asesoria</a></li>
+                  <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Reporte</a></li>
+                </ul>
+              </li>
               <li class="nav-item">
                 <a href="{% url 'home' %}" class="nav-link">Sala Comunicaciones</a>
               </li>

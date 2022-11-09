@@ -107,7 +107,12 @@
                     <th>{{c.6}}</th>
                     <th>{{c.7}}</th>
                     <th>{{c.8}}</th>
-                    <th><span class="badge bg-warning" style="color: white;">{{c.9}}</span></th>
+                    {% if c.9 is None %}
+                      <th><span class="badge bg-warning" style="color: white;">No Asignado</span></th>
+                    
+                    {% else %}
+                      <th><span class="badge bg-success" style="color: white;">{{c.9}} {{c.10}}</span></th>
+                    {% endif %}
                   </tr>
                   {% endfor %}
                 </tbody>
