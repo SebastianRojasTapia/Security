@@ -19,6 +19,7 @@
   <link rel="stylesheet" media="screen" href="{% static 'dist/vendor/tiny-slider/dist/tiny-slider.css'%}"/>
   
   <!-- Main Theme Styles + Bootstrap-->
+  
   <link rel="stylesheet" media="screen" href="{% static 'dist/css/theme.min.css'%}">
   <link rel="stylesheet" href="{% static 'dist/css/simplebar.min.css'%}">
   <link rel="stylesheet" href="{% static 'dist/css/nouislider.min.css'%}">
@@ -197,8 +198,13 @@
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" class="nav-link">Bienvenido @{{user.username}}</a>
                 <ul class="dropdown-menu">
+                  {% if perms.SecurityWeb.add_check %}
+                  <li><a href="{% url 'perfilProfesional'%}" class="dropdown-item"><i class="fa-regular fa-user font-size-sm mr-2"></i>Perfil Profesional</a></i></li>
+                  <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
+                  {% else %}
                   <li><a href="{% url 'perfil'%}" class="dropdown-item"><i class="fa-regular fa-user font-size-sm mr-2"></i>Perfil</a></i></li>
                   <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
+                  {% endif %}
                 </ul>
               </li>       
               {% else %}
@@ -407,10 +413,13 @@
   <script src="{% static 'dist/vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js'%}"></script>
   <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
-  <!-- <script src="{% static 'dist/js/main.js'%}"></script> -->
+  
   <script src="{% static 'dist/js/simplebar.min.js'%}"></script>
   <script src="{% static 'dist/js/nouislider.min.js'%}"></script>
   <script src="{% static 'dist/js/smooth-scroll.polyfills.min.js'%}"></script>
+
+  <!-- SweetAlert2 -->
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- Main theme script-->
   <script src="{% static 'dist/js/theme.min.js'%}"></script>

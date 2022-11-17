@@ -43,6 +43,7 @@ def login(request):
     data = {
         'rubro':listar_rubro()
     }
+
     if 'registro' in request.POST:
         rutCliente = request.POST.get('rut')
         razonSocial = request.POST.get('razonSocial')
@@ -139,8 +140,11 @@ def loginProfesional(request):
     return render(request,'loginProfesional.html',data)
 
 def logout_vista(request):
+    data = {
+        'rubro':listar_rubro()
+    }
     logout(request)
-    return render(request,'login.html')
+    return render(request,'login.html',data)
 
 @login_required(login_url='/login/')
 def contratar(request):
@@ -211,6 +215,7 @@ def asesoria(request):
         'tipo_actividad':listar_tipo_actividad()
     }
     user = request.user.get_username()
+
     if request.method == 'POST':
         idTipoAsesoria = request.POST.get('tip_asesoria')
         descripcion = request.POST.get('descripcion')
@@ -246,17 +251,20 @@ def asesoria(request):
 
 @login_required(login_url='/login/')
 def perfil(request):
+    
     user = request.user.get_username()
+
     data = {'solicitud':listar_usuario(user),
             'count':count_asesoria_cliente(user)
     }
+   
     if request.method == 'POST':
         correo = request.POST.get('email')
         telefono = request.POST.get('telefono')
         password = request.POST.get('password')
         password_confirmed= request.POST.get('password_confirmed')
 
-        if password != None:
+        if password != "":
             if password == password_confirmed:
                 u = User.objects.get(username__exact=user)
                 u.email = correo
@@ -264,7 +272,7 @@ def perfil(request):
                 u.save()
                 salida = SP_MODIFICAR_USER_PASS(telefono, correo, user, u.password)
                 if salida == 1:
-                    data['mensaje'] = 'Modificado correctamente'
+                    data['mensaje'] = 'Perfil Modificado correctamente'
                 else:
                     data['mensaje'] = 'No se ha podido modificar'
             else:
@@ -277,6 +285,59 @@ def perfil(request):
             else:
                 data['mensaje'] = 'No se ha podido modificar'
     return render(request,'perfil.html',data)
+
+@login_required(login_url='/login/')
+def perfil_cliente_plan(request):
+    user = request.user.get_username()
+    data = {
+        'solicitud':listar_usuario(user),
+    }
+    user = request.user.get_username()
+    cliente = Cliente.objects.get(razonsocial = user)
+    asesoria_count_capacidad = Actividad.objects.filter(rutcliente_id=cliente.rutcliente,idtipoactividad=3).count()
+    asesoria_count_asesoria = Actividad.objects.filter(rutcliente_id=cliente.rutcliente).count()
+
+    asesoria = asesoria_count_asesoria - asesoria_count_capacidad
+
+    limite_asesoria = 10 - asesoria
+    limite_asesoria_capacidad = 1 - asesoria_count_capacidad
+    extra_asesoria_capacidad = asesoria_count_capacidad - 1 
+    extra_asesoria = asesoria - 10
+    data['asesoria_capacidad'] = asesoria_count_capacidad
+    data['asesoria'] = asesoria
+    data['limite_asesoria'] = limite_asesoria
+    data['limite_asesoria_capacidad'] = limite_asesoria_capacidad
+    data['extra_asesoria_capacidad'] = extra_asesoria_capacidad
+    data['extra_asesoria'] = extra_asesoria
+
+    print(asesoria_count_capacidad)
+    print(asesoria_count_asesoria)
+
+    return render(request,'plan-cliente.html',data)
+
+
+@login_required(login_url='/login/')
+def perfil_profesional(request):
+    return render(request,'perfil-profesional.html')
+
+@login_required(login_url='/login/')
+def perfil_profesional_kpi(request):
+    data = {}
+    user = request.user.get_username()
+    u = User.objects.get(username=user)
+    correo = Usuario.objects.get(correo = u.email)
+    rut = Usuario.objects.get(correo = correo.correo)
+
+    asesoria_count_general = Actividad.objects.count()
+    asesoria_count_profesional = Actividad.objects.filter(rutprofesional_id=rut.rutprofesional).count()
+
+    porcentaje_asesoria = (asesoria_count_profesional*100)/asesoria_count_general
+
+    data['asesoria_total'] = asesoria_count_general
+    data['asesoria_profesional'] = asesoria_count_profesional
+    data['porcentaje'] = porcentaje_asesoria
+
+    return render(request,'perfil-profesional-kpi.html', data)
 
 @login_required(login_url='/login/')
 def asesoriaCliente(request):

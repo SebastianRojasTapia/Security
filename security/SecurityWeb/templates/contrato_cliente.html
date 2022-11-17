@@ -38,13 +38,17 @@
                     <h5 class="card-title mb-1">{{c.1}}</h5>
                     <p class="card-text text-muted mb-lg-0">{{c.5}}</p>
                     {% endfor %}
-                    <a href="" class="btn btn-primary btn-block d-lg-none" data-toggle="collapse">Menú Cuenta</a>
+                    <a href="#account-menu" class="btn btn-primary btn-block d-lg-none" data-toggle="collapse">Menú Cuenta</a>
                   </div>
                   <div id="account-menu" class="collapse d-lg-block">
                     <div class="list-group list-group-flush border-top">
                       <a href="{% url 'perfil' %}" class="list-group-item list-group-item-action d-flex align-items-center">
                         <i class="fa-regular fa-user font-size-sm mr-2"></i>
                         <span>Mi Perfil</span>
+                      </a>
+                      <a href="{% url 'clientePlan' %}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="fa-solid fa-arrows-rotate font-size-sm mr-2"></i>
+                        <span>Plan</span>
                       </a>
                       <a href="{% url 'contratoCliente'%}" class="list-group-item list-group-item-action d-flex align-items-center active">
                         <i class="fas fa-file-contract font-size-sm mr-2"></i>

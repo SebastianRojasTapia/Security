@@ -81,8 +81,8 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="signin-email">Rubro de la Empresa</label>
-                                    <select name="rubro" id="rubro" class="form-control" aria-label=".form-select-sm example" placeholder="Ingrese un número telefónico" required>
-                                        <option value="Selecciona el Rubro" >Selecciona el Rubro</option>
+                                    <select name="rubro" id="rubro" class="form-control" aria-label=".form-select-sm example" required>
+                                        <option value="Selecciona el Rubro">Selecciona el Rubro</option>
                                         {% for c in rubro %}
                                         <option value="{{c.0}}">{{c.1}}</option>
                                         {% endfor %}
