@@ -1,13 +1,4 @@
 # Create your views here.
-from ast import For
-from email.policy import strict
-from http import client
-from pydoc import describe
-from re import U, template
-from sqlite3 import Date
-import string
-from tkinter import EXCEPTION
-from traceback import print_tb
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 # adjuntamos la libreria de autenticar 
@@ -15,15 +6,23 @@ from django.contrib.auth import authenticate,logout,login as login_autent
 #agregar decorador para impedir el ingreso a las paginas sin estar registrado
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import connection
-from .models import Actividad, CheckList, Cliente, Room, Message, Profesional, Usuario
+from django.views import View
 
+from django.template.loader import get_template
+
+from .models import Actividad, CheckList, Cliente, Room, Message, Profesional, Usuario, Contrato
+
+from datetime import datetime, timedelta # libreria para saber la fecha actual
 from django.http import HttpResponse, JsonResponse
+
+# Realizar reporte
+from io import BytesIO
+from xhtml2pdf import pisa
 
 import cx_Oracle #para ocupar varibles de oracle
 import requests #llamados de api C#
 import json
 
-from datetime import date, datetime # libreria para saber la fecha actual
 
 # Create your views here.
 
@@ -161,7 +160,7 @@ def contratar(request):
             fechaValida = mes+anio
             cvv = request.POST.get('cvv')
             monto = 60
-            tipoMoneda = "CH"
+            tipoMoneda = "USD"
             canalPago = 1
             descripcion = "Contratacion de Plan"
 
@@ -198,9 +197,7 @@ def contratar(request):
                     payload = {}
                     headers = {}
 
-                    response = requests.request("POST", url, headers=headers, data=payload, verify=False )
-
-                    print(response.text)
+                    response = requests.request("POST", url, headers=headers, data=payload, verify=False)
                 else:
                     dataMsg['mensaje'] = 'Error al contratar el plan'
     except:
@@ -216,39 +213,56 @@ def asesoria(request):
     }
     user = request.user.get_username()
 
-    if request.method == 'POST':
-        idTipoAsesoria = request.POST.get('tip_asesoria')
-        descripcion = request.POST.get('descripcion')
-        fecha_inicio = request.POST.get('fecha_inicio')
-        fecha_termino = request.POST.get('fecha_termino')
-        hora_inicio = request.POST.get('hora_inicio')
-        if hora_inicio is not None:
-            hora_inicio = fecha_inicio+' '+hora_inicio
-        hora_termino = request.POST.get('hora_termino')
-        if hora_termino is not None:
-            hora_termino = fecha_termino+' '+hora_termino
-        cant_asistentes = request.POST.get('cant_asistentes')
-        direccion = request.POST.get('direccion')
-        fecha_registro = datetime.now()
-        fecha_format = fecha_registro.strftime("%m%d%Y%H%M%S")
-        room = user +" "+ fecha_format
-        print(idTipoAsesoria)
- 
-        if idTipoAsesoria == "4":
-            new_room = Room(
-            sala = room
-            )
-            new_room.save()
-            data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
+    try:      
+        contrato_obj = Contrato.objects.order_by("-fechacontrato")
+        contrato_obj = contrato_obj[0]
+        contrato_obj = contrato_obj.vigente
+        if contrato_obj == "1":
 
-        salida = SP_INGRESAR_SOLICITUD(descripcion,fecha_inicio,fecha_termino,hora_inicio,hora_termino,cant_asistentes,fecha_registro,direccion,user,idTipoAsesoria)
-        if salida == 1:
-            data['mensaje'] = 'Solicitud Ingresada'
+            if request.method == 'POST':
+                idTipoAsesoria = request.POST.get('tip_asesoria')
+                descripcion = request.POST.get('descripcion')
+                fecha_inicio = request.POST.get('fecha_inicio')
+                fecha_termino = request.POST.get('fecha_termino')
+                hora_inicio = request.POST.get('hora_inicio')
+                if hora_inicio is not None:
+                    hora_inicio = fecha_inicio+' '+hora_inicio
+                hora_termino = request.POST.get('hora_termino')
+                if hora_termino is not None:
+                    hora_termino = fecha_termino+' '+hora_termino
+                cant_asistentes = request.POST.get('cant_asistentes')
+                direccion = request.POST.get('direccion')
+                fecha_registro = datetime.now()
+                fecha_format = fecha_registro.strftime("%m%d%Y%H%M%S")
+                room = user +" "+ fecha_format
+
+                
+                salida = SP_INGRESAR_SOLICITUD(descripcion,fecha_inicio,fecha_termino,hora_inicio,hora_termino,cant_asistentes,fecha_registro,direccion,user,idTipoAsesoria)
+                if salida == 1:
+                    # Probar
+                    data['mensaje'] = 'Solicitud Ingresada'
+                    if idTipoAsesoria == "4":
+                        new_room = Room(
+                        sala = room
+                        )
+                        new_room.save()
+                        data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
+                else:
+                    data['mensaje'] = 'Error al ingresar solicitud'
+            return render(request,'asesoria.html',data)
         else:
-            data['mensaje'] = 'Error al ingresar solicitud'
+            contrato_caducado = Contrato.objects.order_by("-fechacontrato")
+            contrato_caducado = contrato_caducado[0]
+            fechaCaducado = contrato_caducado.fechacontrato
+            fecha = fechaCaducado + timedelta(days=30)
 
-    return render(request,'asesoria.html',data)
-
+            data['contrato_caducado'] = fecha
+            data['expiro'] = "El plan Expiro el "
+            data['mensaje'] = 'Debe Renovar el plan para acceder a nuestro servicio'
+            return render(request,'plan.html',data)
+    except Contrato.DoesNotExist:
+        return redirect('plan')
+        
 @login_required(login_url='/login/')
 def perfil(request):
     
@@ -315,7 +329,6 @@ def perfil_cliente_plan(request):
 
     return render(request,'plan-cliente.html',data)
 
-
 @login_required(login_url='/login/')
 def perfil_profesional(request):
     return render(request,'perfil-profesional.html')
@@ -335,7 +348,7 @@ def perfil_profesional_kpi(request):
 
     data['asesoria_total'] = asesoria_count_general
     data['asesoria_profesional'] = asesoria_count_profesional
-    data['porcentaje'] = porcentaje_asesoria
+    data['porcentaje'] = float(f'{porcentaje_asesoria:.2f}')
 
     return render(request,'perfil-profesional-kpi.html', data)
 
@@ -555,6 +568,60 @@ def getMessages(request, room):
     messages = Message.objects.filter(room=room_details.sala).order_by('idmessage')
 
     return JsonResponse({"messages":list(messages.values())})
+
+def render_to_pdf(template_src, context_dict={}):
+	template = get_template(template_src)
+	html  = template.render(context_dict)
+	result = BytesIO()
+	pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+	if not pdf.err:
+		return HttpResponse(result.getvalue(), content_type='application/pdf')
+	return None
+
+
+def kpi_profesional(request):
+    data = {}
+    user = request.user.get_username()
+    u = User.objects.get(username=user)
+    correo = Usuario.objects.get(correo = u.email)
+    rut = Usuario.objects.get(correo = correo.correo)
+
+    asesoria_count_general = Actividad.objects.count()
+    asesoria_count_profesional = Actividad.objects.filter(rutprofesional_id=rut.rutprofesional).count()
+
+    porcentaje_asesoria = (asesoria_count_profesional*100)/asesoria_count_general
+    data['usuario'] = user
+    data['asesoria_total'] = asesoria_count_general
+    data['asesoria_profesional'] = asesoria_count_profesional
+    data['porcentaje'] = float(f'{porcentaje_asesoria:.2f}')
+    return data
+
+
+#Opens up page as PDF
+class ViewPDF_Check_List(View):
+	def get(self, request, *args, **kwargs):
+		pdf = render_to_pdf('check-list-pdf.html')
+		return HttpResponse(pdf, content_type='application/pdf')
+
+#Opens up page as PDF
+class ViewPDF_KPI_Profesional(View):
+    def get(self, request, *args, **kwargs):
+        data = kpi_profesional(request)
+        pdf = render_to_pdf('Kpi-Asesoria-Profesional-pdf.html', data)
+        return HttpResponse(pdf, content_type='application/pdf')
+
+
+#Automaticly downloads to PDF file
+class DownloadPDF(View):
+	def get(self, request, *args, **kwargs):
+		
+		pdf = render_to_pdf('check-list-pdf.html')
+
+		response = HttpResponse(pdf, content_type='application/pdf')
+		filename = "Invoice_%s.pdf" %("12341231")
+		content = "attachment; filename='%s'" %(filename)
+		response['Content-Disposition'] = content
+		return response
 
 #----------------- Listado -----------------
 def agregar_usuario(rutCliente, razonSocial, numeroContacto,rubro,correo,contrasena):

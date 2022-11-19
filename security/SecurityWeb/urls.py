@@ -1,5 +1,11 @@
 from django.urls import path
+from datetime import datetime
 from .views import *
+from . import views
+
+time = datetime.now()
+time = time.strftime("%m_%d_%Y_%H_%M_%S")
+time = str(time)
 
 urlpatterns = [
     path('',index, name='index'),
@@ -11,8 +17,11 @@ urlpatterns = [
     path('perfil/',perfil, name='perfil'),
     path('perfil-Profesional/',perfil_profesional, name='perfilProfesional'),
     path('perfil-Profesional/kpi',perfil_profesional_kpi, name='perfilProfesionalKpi'),
+    path('perfil-Profesional/kpi/Kpi_'+time, views.ViewPDF_KPI_Profesional.as_view(), name="pdf_kpi"),
     path('asesoria-cliente/',asesoriaCliente, name='asesoriaCliente'),
     path('check-list/',checklist, name='check'),
+    path('check-list/check_list_PDF_'+time, views.ViewPDF_Check_List.as_view(), name="pdf_view"),
+    path('pdf_download/', views.DownloadPDF.as_view(), name="pdf_download"),
     path('plan/',plan, name='plan'),
     path('contratar/',contratar, name='contratar'),
     path('logout_vista/',logout_vista,name='LOGOUT'),

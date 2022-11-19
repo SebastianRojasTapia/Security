@@ -88,8 +88,9 @@ class ComprobantePago(models.Model):
 class Contrato(models.Model):
     idcontrato = models.BigAutoField(primary_key=True)
     descripcion = models.TextField()  # This field type is a guess.
+    vigente = models.CharField(max_length=1)
     valor = models.BigIntegerField()
-    fechacontrato = models.DateField()  # This field type is a guess.
+    fechacontrato = models.DateTimeField()  # This field type is a guess.
     idpago = models.ForeignKey('Pago', models.DO_NOTHING, db_column='idpago')
     rutcliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='rutcliente')
     idactividad = models.ForeignKey(Actividad, models.DO_NOTHING, db_column='idactividad')

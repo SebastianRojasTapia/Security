@@ -68,7 +68,8 @@
                 <div class="card border-0 shadow card-hover">
                   <div class="card-body">
                     <h5 class="card-title text-center">Cantidad de Asesorias Realizadas</h5>
-                    <p class="card-text text-center fs-sm">{{porcentaje}}%  Asesorias Realizadas "{{asesoria_profesional}}"</p>
+                    <p class="card-text text-center fs-sm">Asesorias Asignadas {{asesoria_profesional}}</p>
+                    <p class="card-text text-center fs-sm">Total de Asesoria {{porcentaje}}%</p>
                   </div>
                 </div>
               </div>
@@ -76,22 +77,19 @@
                 <div class="card border-0 shadow card-hover">
                   <div class="card-body">
                     <h5 class="card-title text-center">Cantidad total de Asesorias</h5>
-                    <p class="card-text text-center fs-sm">{{asesoria_total}}</p>
+                    <p class="card-text text-center fs-sm">Total de Asesorias {{asesoria_total}}</p>
+                    <p class="card-text text-center fs-sm">100%</p>
                   </div>
                 </div>
               </div>
               
             </div>
+
             <div class="col-auto text-center mt-4">
-              
-              <a href="#" class="btn btn-sm btn-primary">Decargar PDF</a>
               <br>
-              <span class="badge bg-warning" style="color: white;">Proximamente</span>
-              
+              <a href="{% url 'pdf_kpi' %}" class="btn btn-danger" target="_blank"><i class="fa-solid fa-file-pdf font-size-sm"></i>&nbsp;PDF&nbsp;</a>
             </div>
-            <div style="text-align: center; color: blue; font-size: 25px; ">
-                <h3>{{mensaje}}</h3>
-            </div>
+
           </div>
         </div>
       </section>

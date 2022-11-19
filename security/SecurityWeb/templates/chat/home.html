@@ -27,7 +27,7 @@
 
     
       <!-- Content -->
-      <div class="col-lg-4 ">
+      <div class="col-lg-6 ">
         <div class="d-flex align-items-center justify-content-between mb-4 pb-1 pb-sm-3">
           <h1 class="h2 mb-0">Sala de Comunicaciones</h1>
         </div>
@@ -38,11 +38,11 @@
         
             <div class="col-sm-8 form-group">
                 <label for="ac-fn">Nombre Sala</label>
-                <input type="text" class="form-control form-control-lg" name="room_name" id="room_name" required>
+                <input type="text" class="form-control form-control-lg" name="room_name" id="room_name" placeholder="Ingresa el Nombre de Sala creado anteriormente." required>
             </div>
             <div class="col-sm-8 form-group">
                 <label for="ac-fn">Usuario</label>
-                <input type="text" class="form-control form-control-lg" name="username" id="username" required>
+                <input type="text" class="form-control form-control-lg" name="username" id="username" value="{{user.username}}" placeholder="Ingresa tu nombre o tu Usuario" required>
             </div>
 
         </div>

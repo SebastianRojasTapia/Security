@@ -95,7 +95,7 @@
                       </select>
                 </div>
                 <div class="col-lg-6 mb-4">
-                    <label for="signin-email">7. <i class="fa-solid fa-diagram-project"></i> Existe un Plan de Seguridad </label>
+                    <label for="signin-email">7. <i class="fa-solid fa-diagram-project"></i> Existe un Plan de Seguridad</label>
                     <select class="form-control" aria-label=".form-select-sm example" name="isPlanSeg" id="isPlanSeg" required>
                         <option value="">Selecciona la Asesoria</option>
                         <option value="Si">Si</option>
@@ -104,16 +104,22 @@
                 </div>
 
                 <div class="col-lg-6 mb-4 form-group">
-                    <label for="ac-fn">8. <i class="fa-solid fa-comment"></i> Comentario </label>
+                    <label for="ac-fn">8. <i class="fa-solid fa-comment"></i> Comentario</label>
                     <textarea class="form-control form-control-lg" name="descripcion" id="descripcion" required></textarea>
                 </div>
     
             </div>
-            <button type="submit" class="btn btn-primary btn-lg">&nbsp;Crear Check List&nbsp;</button>
+            <div class="d-flex justify-content-between align-items-center">
+              <button type="submit" class="btn btn-primary btn-lg">&nbsp;Crear Check List&nbsp;</button>
+              <a href="{% url 'pdf_view' %}" class="btn btn-danger btn-lg" target="_blank"><i class="fa-solid fa-file-pdf font-size-sm"></i>&nbsp;PDF&nbsp;</a>
+            </div>
+            
             </form>
+            
             <div style="text-align: center; color: blue; font-size: 25px; ">
                 <h3>{{mensaje}}</h3>
             </div>
+            
           </div>
         </div>
       </section>
