@@ -167,20 +167,20 @@
                 
                     </div>
                 
-                    <form action="{% url 'contratar'%}" method="POST">
+                    <form action="{% url 'contratar' %}" method="POST">
                       {% csrf_token %}
                       <div class="inputBox">
                           <span>Numero Tarjeta</span>
-                          <input type="text" maxlength="16" class="card-number-input" name="numeroTarjeta">
+                          <input type="text" maxlength="16" class="card-number-input" name="numeroTarjeta" required>
                       </div>
                       <div class="inputBox">
                           <span>Nombre Titular</span>
-                          <input type="text" class="card-holder-input" name="nombreTitular">
+                          <input type="text" class="card-holder-input" name="nombreTitular" required>
                       </div>
                       <div class="flexbox">
                           <div class="inputBox">
                               <span>Mes Valida</span>
-                              <select id="" class="month-input" name="mes">
+                              <select id="" class="month-input" name="mes" required>
                                   <option value="month" selected disabled>month</option>
                                   <option value="01">01</option>
                                   <option value="02">02</option>
@@ -198,10 +198,8 @@
                           </div>
                           <div class="inputBox">
                               <span>Año Valida</span>
-                              <select id="" class="year-input" name="anio">
+                              <select id="" class="year-input" name="anio" required>
                                   <option value="year" selected disabled>year</option>
-                                  <option value="21">21</option>
-                                  <option value="22">22</option>
                                   <option value="23">23</option>
                                   <option value="24">24</option>
                                   <option value="25">25</option>
@@ -214,7 +212,7 @@
                           </div>
                           <div class="inputBox">
                               <span>CVV</span>
-                              <input pattern="[0-9.]+" type="text" maxlength="4" class="cvv-input" placeholder="CVV" name="cvv">
+                              <input pattern="[0-9.]+" type="text" maxlength="3" class="cvv-input" placeholder="CVV" name="cvv" required>
                           </div>
                       </div>
                       <button type="submit" class="submit-btn">Contratar</button>
@@ -222,8 +220,6 @@
                 
                   </div>   
                   
-                    
-    
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -234,10 +230,7 @@
           </div>
     </div><!-- /.modal -->
       
-      
 </main>
-
-
 
 <script>
   document.querySelector('.card-number-input').oninput = () =>{

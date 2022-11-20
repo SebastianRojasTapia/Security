@@ -74,29 +74,63 @@
                 <tbody>
                   {% for item in actividad %}
                   <tr>
-                    {% if item.rutprofesional == None %}
+                    
                     <td>{{item.idactividad}}</td>
+
                     <td>{{item.descripcion}}</td>
-                    <td>{{item.fechainicio}}</td>
-                    <td>{{item.fechatermino}}</td>
+
+                    {% if item.fechainicio == None %}
+                    <td>--</td>
+                    {% else %}
+                    <td>{{item.fechainicio|date:"d/M/y"}}</td>
+                    {% endif %}
+
+                    {% if item.fechatermino == None %}
+                    <td>--</td>
+                    {% else %}
+                    <td>{{item.fechatermino|date:"d/M/y"}}</td>
+                    {% endif %}
+
+                    {% if item.horainicio == None %}
+                    <td>--</td>
+                    {% else %}
                     <td>{{item.horainicio}}</td>
+                    {% endif %}
+
+                    {% if item.horatermino == None %}
+                    <td>--</td>
+                    {% else %}
                     <td>{{item.horatermino}}</td>
+                    {% endif %}
+
+                    {% if item.cantidadasistente == None %}
+                    <td>--</td>
+                    {% else %}
                     <td>{{item.cantidadasistente}}</td>
-                    <td>{{item.fecharegistro}}</td>
+                    {% endif %}
+
+                    <td>{{item.fecharegistro|date:"d/M/y"}} {{item.fecharegistro|time:"H:i"}}</td>
+
+                    {% if item.direccion == None %}
+                    <td>--</td>
+                    {% else %}
                     <td>{{item.direccion}}</td>
+                    {% endif %}
+
                     <td>{{item.idtipoactividad.descripcion}}</td>
-                    <td>{{item.rutcliente.rutcliente}}</td>
+
+                    <td>{{item.rutcliente.razonsocial}}</td>
+
                     <td>{{item.idcheck.idcheck}}</td>
 
-                    
                     <td>
                       <div class="row">
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                          <a href="{% url 'asignarProfesional' item.idactividad %}" type="button" class="btn btn-success btn-sm mb-2" >Asignar</a>
+                          <a href="{% url 'asignarProfesional' item.idactividad %}" type="button" class="btn btn-success btn-sm mb-2">Asignar</a>
                         </div>
                       </div>
                     </td>
-                    {% endif %}
+            
                   </tr>
                   {% endfor %}
                 </tbody>

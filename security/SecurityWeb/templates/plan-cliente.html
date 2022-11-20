@@ -15,7 +15,7 @@
             <li class="breadcrumb-item">
                 <i class="fa-solid fa-angle-right"></i>
             </li>
-            <li class="breadcrumb-item active" aria-current="page">Perfil</li>
+            <li class="breadcrumb-item active" aria-current="page">Tu Plan</li>
             </ol>
             
         </div>
@@ -82,10 +82,21 @@
               <h1 class="h2 mb-0">Cuota del Plan</h1>
             </div>
             <div class="row">
+
+              {% if activo == 0 %}
               <div class="col-xl-4 col-sm-6">
                 <div class="card border-0 shadow card-hover p-1">
                   <div class="card-body">
-                    <h5 class="card-title text-center">Limite Plan</h5>
+                    <h5 class="card-title text-danger text-center">No tiene un Plan Contratado</h5>
+                  </div>
+                </div>
+              </div>
+              {% else %}
+
+              <div class="col-xl-4 col-sm-6">
+                <div class="card border-0 shadow card-hover p-1">
+                  <div class="card-body">
+                    <h5 class="card-title text-center">Plan</h5>
                     <p class="card-text text-center fs-sm">10 Asesoria</p>
                     <p class="card-text text-center fs-sm">1 Capacitación</p>
                   </div>
@@ -95,8 +106,8 @@
                 <div class="card border-0 shadow card-hover p-1">
                   <div class="card-body">
                     <h5 class="card-title text-center">Usado</h5>
-                    <p class="card-text text-center fs-sm">{{asesoria}} Asesoria</p>
-                    <p class="card-text text-center fs-sm">{{asesoria_capacidad}} Capacitación</p>
+                    <p class="card-text text-center fs-sm">{{usado_asesoria}} Asesoria</p>
+                    <p class="card-text text-center fs-sm">{{usado_capacitacion}} Capacitación</p>
                   </div>
                 </div>
               </div>
@@ -104,11 +115,15 @@
                 <div class="card border-0 shadow card-hover p-1">
                   <div class="card-body">
                     <h5 class="card-title text-center">Disponible</h5>
+                    {% if limite_asesoria > 0 %}
                     <p class="card-text text-center fs-sm">{{limite_asesoria}} Asesoria</p>
-                    {% if limite_asesoria_capacidad < 0 %}
-                    <p class="card-text text-center fs-sm">0 Capacitación</p>
                     {% else %}
-                    <p class="card-text text-center fs-sm">{{limite_asesoria_capacidad}} Capacitación</p>
+                    <p class="card-text text-danger text-center fs-sm">{{limite_asesoria}} Asesoria</p>
+                    {% endif %}
+                    {% if limite_capacitacion > 0 %}
+                    <p class="card-text text-center fs-sm">{{limite_capacitacion}} Capacitación</p>
+                    {% else %}
+                    <p class="card-text text-danger text-center fs-sm">{{limite_capacitacion}} Capacitación</p>
                     {% endif %}
                   </div>
                 </div>
@@ -149,6 +164,7 @@
                 No tienes Cobros Extras.
               </div>
             </div>
+            {% endif %}
             {% endif %}
           </div>
         </div>

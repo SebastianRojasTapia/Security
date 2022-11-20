@@ -18,7 +18,7 @@ class Actividad(models.Model):
     horainicio = models.TimeField(blank=True, null=True)  # This field type is a guess.
     horatermino = models.TimeField(blank=True, null=True)  # This field type is a guess.
     cantidadasistente = models.BigIntegerField(blank=True, null=True)
-    fecharegistro = models.DateField(blank=True, null=True)  # This field type is a guess.
+    fecharegistro = models.DateTimeField(blank=True, null=True)  # This field type is a guess.
     direccion = models.TextField(blank=True, null=True)  # This field type is a guess.
     idtipoactividad = models.ForeignKey('TipoActividad', models.DO_NOTHING, db_column='idtipoactividad')
     rutcliente = models.ForeignKey('Cliente', models.DO_NOTHING, db_column='rutcliente')
@@ -90,6 +90,10 @@ class Contrato(models.Model):
     descripcion = models.TextField()  # This field type is a guess.
     vigente = models.CharField(max_length=1)
     valor = models.BigIntegerField()
+    asesoria = models.BigIntegerField()
+    capacitacion = models.BigIntegerField()
+    asesoria_disponible = models.BigIntegerField()
+    capacitacion_disponible = models.BigIntegerField()
     fechacontrato = models.DateTimeField()  # This field type is a guess.
     idpago = models.ForeignKey('Pago', models.DO_NOTHING, db_column='idpago')
     rutcliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='rutcliente')

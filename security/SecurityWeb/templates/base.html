@@ -247,24 +247,17 @@
               </li>
               {% if perms.SecurityWeb.add_check %}
               <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Solicitudes</a>
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Mantenedores</a>
                 <ul class="dropdown-menu">
-                  <li><a href="{% url 'listadoActividad' %}" class="nav-link">Asignar Profesional</a></li>
-                  <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Asesoria</a></li>
-                  <li><a href="#" class="dropdown-item">Solicitar Reporte</a></li>
-                </ul>
-              </li>
-              <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Check List</a>
-                <ul class="dropdown-menu">
-                  <li><a href="{% url 'check' %}" class="nav-link">Ingresar Check List</a></li>
+                  <li><a href="{% url 'check' %}" class="dropdown-item">Ingresar Check List</a></li>
                   <li><a href="{% url 'check_list_index' %}" class="dropdown-item">Listar Check List</a></li>
+                  <li><a href="{% url 'listadoActividad' %}" class="dropdown-item">Lista Actividades</a></li>
                 </ul>
               </li>
               <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Check List</a>
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Comunicación</a>
                 <ul class="dropdown-menu">
-                  <a href="{% url 'home' %}" class="nav-link">Sala Comunicaciones</a>
+                  <a href="{% url 'home' %}" class="dropdown-item">Sala Comunicaciones</a>
                   <li><a href="{% url 'listaChat' %}" class="dropdown-item">Listado Sala de Comunicación</a></li>
                 </ul>
               </li>

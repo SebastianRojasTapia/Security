@@ -23,7 +23,6 @@ import cx_Oracle #para ocupar varibles de oracle
 import requests #llamados de api C#
 import json
 
-
 # Create your views here.
 
 def index(request):
@@ -148,63 +147,129 @@ def logout_vista(request):
 @login_required(login_url='/login/')
 def contratar(request):
     user = request.user.get_username()
-    dataMsg = {}
+    data = {}
     try:
-        if request.method == 'POST':
-            url = "https://localhost:7000/ComprobantePago/SaveComprobante"
 
-            numeroTarjeta = request.POST.get('numeroTarjeta')
-            nombreTitular = request.POST.get('nombreTitular')
-            mes = request.POST.get('mes')
-            anio = request.POST.get('anio')
-            fechaValida = mes+anio
-            cvv = request.POST.get('cvv')
-            monto = 60
-            tipoMoneda = "USD"
-            canalPago = 1
-            descripcion = "Contratacion de Plan"
+        cliente = Cliente.objects.get(razonsocial = user)
+        count = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente).count()
 
-            headers = {'Content-Type': 'application/json'}
+        if count==0:
+            if request.method == 'POST':
+                url = "https://localhost:7000/ComprobantePago/SaveComprobante"
 
-            payload = json.dumps({
-                'numeroTarjeta':numeroTarjeta,
-                'nombreTitular':nombreTitular,
-                'fechaValida':fechaValida,
-                'monto':monto,
-                'tipoMoneda':tipoMoneda,
-                'cvv':cvv
-            })
-            
-            response = requests.request("POST", url, headers=headers, data=payload, verify=False )
-            print(response.text)
-            if response.status_code == 200:
-                data = json.loads(response.content.decode('utf-8'))
+                numeroTarjeta = request.POST.get('numeroTarjeta')
+                nombreTitular = request.POST.get('nombreTitular')
+                mes = request.POST.get('mes')
+                anio = request.POST.get('anio')
+                fechaValida = mes+anio
+                cvv = request.POST.get('cvv')
+                monto = 60
+                tipoMoneda = "USD"
+                canalPago = 1
+                descripcion = "Contratacion de Plan"
 
-                idcomprobante = data['idcomprobante']
-                montoPago = data['montoPago']
-                message = data['message']
-                fechaRegistro = data['fecharegistro']
-                # Format la fecha para el ingreso a base de datos
-                fechaRegistro = fechaRegistro.replace("T","")
-                fechaRegistro = fechaRegistro[:-14]
+                headers = {'Content-Type': 'application/json'}
+
+                payload = json.dumps({
+                    'numeroTarjeta':numeroTarjeta,
+                    'nombreTitular':nombreTitular,
+                    'fechaValida':fechaValida,
+                    'monto':monto,
+                    'tipoMoneda':tipoMoneda,
+                    'cvv':cvv
+                })
                 
-                salida = SP_CONTRATO_PAGO(user,fechaRegistro,montoPago,canalPago,idcomprobante,descripcion)
-                if salida == 1:
-                    dataMsg['mensaje'] = message
-                    u = User.objects.get(username=user)
-                    url = f"https://localhost:7000/MailSender/SendPaymentEmail?emailFrom=soporte@security.com&emailTo={u.email}&nameTo={nombreTitular}&paymentData=Monto Cancelado: {monto}"
+                response = requests.request("POST", url, headers=headers, data=payload, verify=False )
 
-                    payload = {}
-                    headers = {}
+                if response.status_code == 200:
+                    data = json.loads(response.content.decode('utf-8'))
 
-                    response = requests.request("POST", url, headers=headers, data=payload, verify=False)
-                else:
-                    dataMsg['mensaje'] = 'Error al contratar el plan'
+                    idcomprobante = data['idcomprobante']
+                    montoPago = data['montoPago']
+                    message = data['message']
+                    fechaRegistro = data['fecharegistro']
+                    # Format la fecha para el ingreso a base de datos
+                    fechaRegistro = fechaRegistro.replace("T","")
+                    fechaRegistro = fechaRegistro[:-14]
+                    
+                    salida = SP_CONTRATO_PAGO(user,fechaRegistro,montoPago,canalPago,idcomprobante,descripcion)
+                    if salida == 1:
+                        data['mensaje'] = message
+                        u = User.objects.get(username=user)
+                        url = f"https://localhost:7000/MailSender/SendPaymentEmail?emailFrom=soporte@security.com&emailTo={u.email}&nameTo={nombreTitular}&paymentData=Monto Cancelado: {monto}"
+
+                        payload = {}
+                        headers = {}
+
+                        response = requests.request("POST", url, headers=headers, data=payload, verify=False)
+                    else:
+                        data['mensaje'] = 'Error al contratar el plan'
+                return render(request,'plan.html',data)
+
+        else:
+            contrato_obj = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente)
+            contrato_obj = contrato_obj[0]
+            contrato_obj = contrato_obj.vigente
+
+            if contrato_obj == "1":
+                data['mensaje'] = 'Ya posee un plan Vigente. Espera a que caduque o Contrata servicios Extras.'
+                return render(request,'plan.html',data)
+
+            if contrato_obj == "0":
+
+                if request.method == 'POST':
+                    url = "https://localhost:7000/ComprobantePago/SaveComprobante"
+                    numeroTarjeta = request.POST.get('numeroTarjeta')
+                    nombreTitular = request.POST.get('nombreTitular')
+                    mes = request.POST.get('mes')
+                    anio = request.POST.get('anio')
+                    fechaValida = mes+anio
+                    cvv = request.POST.get('cvv')
+                    monto = 60
+                    tipoMoneda = "USD"
+                    canalPago = 1
+                    descripcion = "Contratacion de Plan"
+
+                    headers = {'Content-Type': 'application/json'}
+
+                    payload = json.dumps({
+                        'numeroTarjeta':numeroTarjeta,
+                        'nombreTitular':nombreTitular,
+                        'fechaValida':fechaValida,
+                        'monto':monto,
+                        'tipoMoneda':tipoMoneda,
+                        'cvv':cvv
+                    })
+                    
+                    response = requests.request("POST", url, headers=headers, data=payload, verify=False )
+
+                    if response.status_code == 200:
+                        data = json.loads(response.content.decode('utf-8'))
+
+                        idcomprobante = data['idcomprobante']
+                        montoPago = data['montoPago']
+                        message = data['message']
+                        fechaRegistro = data['fecharegistro']
+                        # Format la fecha para el ingreso a base de datos
+                        fechaRegistro = fechaRegistro.replace("T","")
+                        fechaRegistro = fechaRegistro[:-14]
+                        
+                        salida = SP_CONTRATO_PAGO(user,fechaRegistro,montoPago,canalPago,idcomprobante,descripcion)
+                        if salida == 1:
+                            data['mensaje'] = message
+                            u = User.objects.get(username=user)
+                            url = f"https://localhost:7000/MailSender/SendPaymentEmail?emailFrom=soporte@security.com&emailTo={u.email}&nameTo={nombreTitular}&paymentData=Monto Cancelado: {monto}"
+
+                            payload = {}
+                            headers = {}
+
+                            response = requests.request("POST", url, headers=headers, data=payload, verify=False)
+                        else:
+                            data['mensaje'] = 'Error al contratar el plan'
+            return render(request,'plan.html',data)
     except:
-        dataMsg['mensaje'] = 'Error al conectar al servidor'
-        return render(request,'plan.html',dataMsg)
-
-    return render(request,'plan.html',dataMsg)
+        data['mensaje'] = 'Error al conectar al servidor'
+        return render(request,'plan.html',data)
 
 @login_required(login_url='/login/')
 def asesoria(request):
@@ -213,8 +278,13 @@ def asesoria(request):
     }
     user = request.user.get_username()
 
-    try:      
-        contrato_obj = Contrato.objects.order_by("-fechacontrato")
+    cliente = Cliente.objects.get(razonsocial = user)
+    count = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente).count()
+
+    if count==0:
+        return redirect('plan')
+    else:
+        contrato_obj = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente)
         contrato_obj = contrato_obj[0]
         contrato_obj = contrato_obj.vigente
         if contrato_obj == "1":
@@ -250,7 +320,7 @@ def asesoria(request):
                 else:
                     data['mensaje'] = 'Error al ingresar solicitud'
             return render(request,'asesoria.html',data)
-        else:
+        if contrato_obj == "0":
             contrato_caducado = Contrato.objects.order_by("-fechacontrato")
             contrato_caducado = contrato_caducado[0]
             fechaCaducado = contrato_caducado.fechacontrato
@@ -260,9 +330,7 @@ def asesoria(request):
             data['expiro'] = "El plan Expiro el "
             data['mensaje'] = 'Debe Renovar el plan para acceder a nuestro servicio'
             return render(request,'plan.html',data)
-    except Contrato.DoesNotExist:
-        return redirect('plan')
-        
+      
 @login_required(login_url='/login/')
 def perfil(request):
     
@@ -307,25 +375,42 @@ def perfil_cliente_plan(request):
         'solicitud':listar_usuario(user),
     }
     user = request.user.get_username()
+
     cliente = Cliente.objects.get(razonsocial = user)
-    asesoria_count_capacidad = Actividad.objects.filter(rutcliente_id=cliente.rutcliente,idtipoactividad=3).count()
-    asesoria_count_asesoria = Actividad.objects.filter(rutcliente_id=cliente.rutcliente).count()
+    contrato = Contrato.objects.filter(rutcliente_id = cliente.rutcliente).count()
 
-    asesoria = asesoria_count_asesoria - asesoria_count_capacidad
+    if contrato==0:
+        data['activo'] = 0
+    
+    else:
 
-    limite_asesoria = 10 - asesoria
-    limite_asesoria_capacidad = 1 - asesoria_count_capacidad
-    extra_asesoria_capacidad = asesoria_count_capacidad - 1 
-    extra_asesoria = asesoria - 10
-    data['asesoria_capacidad'] = asesoria_count_capacidad
-    data['asesoria'] = asesoria
-    data['limite_asesoria'] = limite_asesoria
-    data['limite_asesoria_capacidad'] = limite_asesoria_capacidad
-    data['extra_asesoria_capacidad'] = extra_asesoria_capacidad
-    data['extra_asesoria'] = extra_asesoria
+        contrato_obj = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente)
+        contrato_obj = contrato_obj[0]
+        contrato_obj = contrato_obj.vigente
+        if contrato_obj == "1":
 
-    print(asesoria_count_capacidad)
-    print(asesoria_count_asesoria)
+            contrato_obj = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente)
+            contrato_obj = contrato_obj[0]
+
+            capacitacion = contrato_obj.capacitacion
+            asesoria = contrato_obj.asesoria
+            disponible_capacitacion = contrato_obj.capacitacion_disponible
+            disponible_asesoria = contrato_obj.asesoria_disponible
+
+            data['asesoria'] = asesoria
+            data['capacitacion'] = capacitacion
+
+            data['usado_asesoria'] = asesoria - disponible_asesoria
+            data['usado_capacitacion'] = capacitacion - disponible_capacitacion
+            
+            data['limite_asesoria'] = disponible_asesoria
+            data['limite_capacitacion'] = disponible_capacitacion
+            
+            data['extra_asesoria_capacidad'] = 1
+            data['extra_asesoria'] = 0
+
+        if contrato_obj == "0":
+            data['activo'] = 0
 
     return render(request,'plan-cliente.html',data)
 
@@ -578,7 +663,6 @@ def render_to_pdf(template_src, context_dict={}):
 		return HttpResponse(result.getvalue(), content_type='application/pdf')
 	return None
 
-
 def kpi_profesional(request):
     data = {}
     user = request.user.get_username()
@@ -596,7 +680,6 @@ def kpi_profesional(request):
     data['porcentaje'] = float(f'{porcentaje_asesoria:.2f}')
     return data
 
-
 #Opens up page as PDF
 class ViewPDF_Check_List(View):
 	def get(self, request, *args, **kwargs):
@@ -609,7 +692,6 @@ class ViewPDF_KPI_Profesional(View):
         data = kpi_profesional(request)
         pdf = render_to_pdf('Kpi-Asesoria-Profesional-pdf.html', data)
         return HttpResponse(pdf, content_type='application/pdf')
-
 
 #Automaticly downloads to PDF file
 class DownloadPDF(View):
