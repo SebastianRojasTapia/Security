@@ -97,8 +97,8 @@
                 <div class="card border-0 shadow card-hover p-1">
                   <div class="card-body">
                     <h5 class="card-title text-center">Plan</h5>
-                    <p class="card-text text-center fs-sm">10 Asesoria</p>
-                    <p class="card-text text-center fs-sm">1 Capacitación</p>
+                    <p class="card-text text-center fs-sm">{{asesoria}} Asesoria</p>
+                    <p class="card-text text-center fs-sm">{{capacitacion}} Capacitación</p>
                   </div>
                 </div>
               </div>
@@ -133,24 +133,27 @@
                 <div class="card border-0 shadow card-hover">
                   <div class="card-body">
                     <h5 class="card-title text-center">Extra A Pagar</h5>
-                    {% if limite_asesoria < 0 %}
+                    {% if extra_asesoria > 0 %}
                     <p class="card-text text-center fs-sm">{{extra_asesoria}} Asesoria Extra A Pagar</p>
                     {% else %}
                     <p class="card-text text-center fs-sm">0 Asesoria Extra A Pagar</p>
                     {% endif %}
                     
-                    {% if limite_asesoria_capacidad < 0 %}
-                    <p class="card-text text-center fs-sm">{{extra_asesoria_capacidad}} Capacitación Extra A Pagar</p>
+                    {% if extra_capacitacion > 0 %}
+                    <p class="card-text text-center fs-sm">{{extra_capacitacion}} Capacitación Extra A Pagar</p>
                     {% else %}
                     <p class="card-text text-center fs-sm">0 Capacitación Extra A Pagar</p>
                     {% endif %}
+                    {% if extra_asesoria > 0 or extra_capacitacion > 0 %}
                     <a href="#" class="btn btn-sm btn-primary d-flex justify-content-center">Pagar</a>
+                    {% else %}
+                    {% endif %}
                   </div>
                 </div>
               </div>
             </div>
             
-            {% if limite_asesoria < 0 or limite_asesoria_capacidad < 0 %}
+            {% if extra_asesoria > 0 or extra_capacitacion > 0 %}
             <div class="alert alert-warning d-flex align-items-center" role="alert">
               <i class="fa-solid fa-triangle-exclamation font-size-lg mr-2"></i>
               <div>

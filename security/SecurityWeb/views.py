@@ -286,8 +286,7 @@ def asesoria(request):
     else:
         contrato_obj = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente)
         contrato_obj = contrato_obj[0]
-        contrato_obj = contrato_obj.vigente
-        if contrato_obj == "1":
+        if contrato_obj.vigente == "1":
 
             if request.method == 'POST':
                 idTipoAsesoria = request.POST.get('tip_asesoria')
@@ -306,21 +305,54 @@ def asesoria(request):
                 fecha_format = fecha_registro.strftime("%m%d%Y%H%M%S")
                 room = user +" "+ fecha_format
 
-                
                 salida = SP_INGRESAR_SOLICITUD(descripcion,fecha_inicio,fecha_termino,hora_inicio,hora_termino,cant_asistentes,fecha_registro,direccion,user,idTipoAsesoria)
-                if salida == 1:
-                    # Probar
-                    data['mensaje'] = 'Solicitud Ingresada'
-                    if idTipoAsesoria == "4":
-                        new_room = Room(
-                        sala = room
-                        )
-                        new_room.save()
-                        data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
+
+                if contrato_obj.capacitacion_disponible > 0 and contrato_obj.asesoria_disponible > 0:
+                    
+                    if salida == 1:
+
+                        data['mensaje'] = 'Solicitud Ingresada'
+                        if idTipoAsesoria == "3":
+                            contrato_obj.capacitacion_disponible = contrato_obj.capacitacion_disponible - 1
+                            contrato_obj.save()
+
+                        if idTipoAsesoria == "4":
+                            new_room = Room(
+                            sala = room
+                            )
+                            new_room.save()
+                            data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
+                    
+                        else:
+                            contrato_obj.asesoria_disponible = contrato_obj.asesoria_disponible - 1
+                            contrato_obj.save()
+                    else:
+                        data['mensaje'] = 'Error al ingresar solicitud'
                 else:
-                    data['mensaje'] = 'Error al ingresar solicitud'
+                    if salida == 1:
+
+                        data['mensaje'] = 'Solicitud Ingresada'
+
+                        if idTipoAsesoria == "3":
+                            contrato_obj.capacitacion_disponible = contrato_obj.capacitacion_disponible - 1
+                            contrato_obj.save()
+
+                        if idTipoAsesoria == "4":
+                            new_room = Room(
+                            sala = room
+                            )
+                            new_room.save()
+                            data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
+                    
+                        else:
+                            contrato_obj.asesoria_disponible = contrato_obj.asesoria_disponible - 1
+                            contrato_obj.save()
+                    else:
+                        data['mensaje'] = 'Error al ingresar solicitud'
+
+                    data['extra'] = 'Supero el limiete de su plan. Deberá pagar extra por estos servicios'
             return render(request,'asesoria.html',data)
-        if contrato_obj == "0":
+        if contrato_obj.vigente == "0":
             contrato_caducado = Contrato.objects.order_by("-fechacontrato")
             contrato_caducado = contrato_caducado[0]
             fechaCaducado = contrato_caducado.fechacontrato
@@ -406,8 +438,8 @@ def perfil_cliente_plan(request):
             data['limite_asesoria'] = disponible_asesoria
             data['limite_capacitacion'] = disponible_capacitacion
             
-            data['extra_asesoria_capacidad'] = 1
-            data['extra_asesoria'] = 0
+            data['extra_asesoria'] = -(disponible_asesoria)
+            data['extra_capacitacion'] = -(disponible_capacitacion)
 
         if contrato_obj == "0":
             data['activo'] = 0
