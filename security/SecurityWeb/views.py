@@ -8,9 +8,11 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db import connection
 from django.views import View
 
+from django.db.models import Q
+
 from django.template.loader import get_template
 
-from .models import Actividad, CheckList, Cliente, Room, Message, Profesional, Usuario, Contrato
+from .models import Actividad, CheckList, Cliente, Room, Message, Profesional, Usuario, Contrato, TipoActividad
 
 from datetime import datetime, timedelta # libreria para saber la fecha actual
 from django.http import HttpResponse, JsonResponse
@@ -272,6 +274,25 @@ def contratar(request):
         return render(request,'plan.html',data)
 
 @login_required(login_url='/login/')
+def pagoExtra(request,extra_asesoria,extra_capacitacion):
+
+    tipo_actividad = TipoActividad.objects.filter(Q(idtipoactividad = 2) | Q(idtipoactividad = 3))
+    
+    asesoria = tipo_actividad[0]
+    capacitacion = tipo_actividad[1]
+    
+    data = {
+        'extra_asesoria':extra_asesoria,
+        'extra_capacitacion':extra_capacitacion,
+        'asesoria_monto':asesoria.montoactividad,
+        'capacitacion_monto':capacitacion.montoactividad,
+        'asesoria_valor':capacitacion.montoactividad*extra_asesoria,
+        'capacitacion_valor':capacitacion.montoactividad*extra_capacitacion,
+        'total': (capacitacion.montoactividad*extra_asesoria)+capacitacion.montoactividad*extra_capacitacion
+    }
+    return render(request,'pago_extra.html',data)
+
+@login_required(login_url='/login/')
 def asesoria(request):
     data = {
         'tipo_actividad':listar_tipo_actividad()
@@ -307,16 +328,16 @@ def asesoria(request):
 
                 salida = SP_INGRESAR_SOLICITUD(descripcion,fecha_inicio,fecha_termino,hora_inicio,hora_termino,cant_asistentes,fecha_registro,direccion,user,idTipoAsesoria)
 
-                if contrato_obj.capacitacion_disponible > 0 and contrato_obj.asesoria_disponible > 0:
+                if contrato_obj.capacitacion_disponible <= 0 or contrato_obj.asesoria_disponible <= 0:
                     
                     if salida == 1:
 
                         data['mensaje'] = 'Solicitud Ingresada'
                         if idTipoAsesoria == "3":
-                            contrato_obj.capacitacion_disponible = contrato_obj.capacitacion_disponible - 1
+                            contrato_obj.capacitacion_extra = contrato_obj.capacitacion_extra + 1
                             contrato_obj.save()
 
-                        if idTipoAsesoria == "4":
+                        elif idTipoAsesoria == "4":
                             new_room = Room(
                             sala = room
                             )
@@ -324,8 +345,10 @@ def asesoria(request):
                             data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
                     
                         else:
-                            contrato_obj.asesoria_disponible = contrato_obj.asesoria_disponible - 1
+                            contrato_obj.asesoria_extra = contrato_obj.asesoria_extra + 1
                             contrato_obj.save()
+
+                        data['extra'] = 'Supero el limiete de su plan. Deberá pagar extra por estos servicios'
                     else:
                         data['mensaje'] = 'Error al ingresar solicitud'
                 else:
@@ -337,7 +360,7 @@ def asesoria(request):
                             contrato_obj.capacitacion_disponible = contrato_obj.capacitacion_disponible - 1
                             contrato_obj.save()
 
-                        if idTipoAsesoria == "4":
+                        elif idTipoAsesoria == "4":
                             new_room = Room(
                             sala = room
                             )
@@ -350,7 +373,6 @@ def asesoria(request):
                     else:
                         data['mensaje'] = 'Error al ingresar solicitud'
 
-                    data['extra'] = 'Supero el limiete de su plan. Deberá pagar extra por estos servicios'
             return render(request,'asesoria.html',data)
         if contrato_obj.vigente == "0":
             contrato_caducado = Contrato.objects.order_by("-fechacontrato")
@@ -438,8 +460,9 @@ def perfil_cliente_plan(request):
             data['limite_asesoria'] = disponible_asesoria
             data['limite_capacitacion'] = disponible_capacitacion
             
-            data['extra_asesoria'] = -(disponible_asesoria)
-            data['extra_capacitacion'] = -(disponible_capacitacion)
+
+            data['extra_asesoria'] = contrato_obj.asesoria_extra
+            data['extra_capacitacion'] = contrato_obj.capacitacion_extra
 
         if contrato_obj == "0":
             data['activo'] = 0

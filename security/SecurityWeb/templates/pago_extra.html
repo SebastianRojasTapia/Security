@@ -1,0 +1,154 @@
+{% extends "base.html" %}}
+
+{% load static %}
+{% block contenido %}
+
+<main class="cs-page-wrapper">
+
+    <nav class="bg-secondary mb-3" aria-label="breadcrumb">
+        <div class="container">
+            <ol class="breadcrumb breadcrumb-alt mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'index' %}"><i class="fa-solid fa-house"></i></a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">Inicio</li>
+            <li class="breadcrumb-item">
+                <i class="fa-solid fa-angle-right"></i>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Pago Extra</li>
+            </ol>
+            
+        </div>
+    </nav>
+    
+    <section class="container pt-3 pt-md-4">
+        <div class="row">
+    
+            <div class="card-body">
+                <div class="table-responsive" style="white-space: nowrap; overflow-x: auto;">
+                    <table class="table align-middle table-sm">
+                      <thead>
+                        <tr class="text-dark">
+                            <th>Item</th>
+                            <th>Cantidad</th>
+                            <th>Valor Unitario</th>
+                            <th>Valor Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                            <th>Asesoria</th>
+                            <th>{{extra_asesoria}}</th>
+                            <th>USD {{asesoria_monto}}</th>
+                            <th>USD {{asesoria_valor}}</th>
+                        </tr>
+                        <tr>
+                            <th>Capacitación</th>
+                            <th>{{extra_capacitacion}}</th>
+                            <th>USD {{capacitacion_monto}}</th>
+                            <th>USD {{capacitacion_valor}}</th>
+                        </tr>
+                      </tbody>
+                      <th></th>
+                      <th></th>
+                      <th><h5 class="text-info">Total a Pagar</h5></th>
+                      <th><h5 class="text-info">USD {{total}}</h5></th>
+                    </table>
+                </div>
+
+                <div class="container-card" style="background: #fff;">
+
+                  <div class="card-container">
+              
+                      <div class="front">
+                          <div class="image">
+                              <img src="{% static 'dist/img/chip.png'%}" alt="">
+                              <img src="{% static 'dist/img/visa.png'%}" alt="">
+                          </div>
+                          <div class="card-number-box">################</div>
+                          <div class="flexbox">
+                              <div class="box">
+                                <span>Nombre Titular</span>
+                                <div class="card-holder-name">Nombre Completo</div>
+                              </div>
+                              <div class="box">
+                                  <span>Valida Hasta</span>
+                                  <div class="expiration">
+                                      <span class="exp-month">MM/</span>
+                                      <span class="exp-year">YY</span>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+              
+                      <div class="back">
+                          <div class="stripe"></div>
+                          <div class="box">
+                              <span>cvv</span>
+                              <div class="cvv-box"></div>
+                              <img src="image/visa.png" alt="">
+                          </div>
+                      </div>
+              
+                  </div>
+              
+                  <form action="{% url 'contratar' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="inputBox">
+                        <span>Numero Tarjeta</span>
+                        <input type="text" maxlength="16" class="card-number-input" name="numeroTarjeta" required>
+                    </div>
+                    <div class="inputBox">
+                        <span>Nombre Titular</span>
+                        <input type="text" class="card-holder-input" name="nombreTitular" required>
+                    </div>
+                    <div class="flexbox">
+                        <div class="inputBox">
+                            <span>Mes Valida</span>
+                            <select id="" class="month-input" name="mes" required>
+                                <option value="month" selected disabled>month</option>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                        <div class="inputBox">
+                            <span>Año Valida</span>
+                            <select id="" class="year-input" name="anio" required>
+                                <option value="year" selected disabled>year</option>
+                                <option value="23">23</option>
+                                <option value="24">24</option>
+                                <option value="25">25</option>
+                                <option value="26">26</option>
+                                <option value="27">27</option>
+                                <option value="28">28</option>
+                                <option value="29">29</option>
+                                <option value="30">30</option>
+                            </select>
+                        </div>
+                        <div class="inputBox">
+                            <span>CVV</span>
+                            <input pattern="[0-9.]+" type="text" maxlength="3" class="cvv-input" placeholder="CVV" name="cvv" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">Pagar</button>
+                  </form>
+              
+                </div>   
+                
+              </div>
+
+           
+        </div>
+    </section>
+</main>
+{% endblock contenido %}

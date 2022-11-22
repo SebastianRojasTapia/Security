@@ -39,4 +39,5 @@ urlpatterns = [
     path('checkview', checkview, name='checkview'),
     path('send', send, name='send'),
     path('getMessages/<str:room>/', getMessages, name='getMessages'),
+    path('pagoExtra/<int:extra_asesoria>/<int:extra_capacitacion>/', pagoExtra, name='pagoExtra'),
 ]

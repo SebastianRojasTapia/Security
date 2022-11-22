@@ -94,6 +94,8 @@ class Contrato(models.Model):
     capacitacion = models.BigIntegerField()
     asesoria_disponible = models.BigIntegerField()
     capacitacion_disponible = models.BigIntegerField()
+    asesoria_extra = models.BigIntegerField()
+    capacitacion_extra = models.BigIntegerField()
     fechacontrato = models.DateTimeField()  # This field type is a guess.
     idpago = models.ForeignKey('Pago', models.DO_NOTHING, db_column='idpago')
     rutcliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='rutcliente')
