@@ -99,10 +99,12 @@
                   <tr>
                     <th>{{c.0}}</th>
                     <th>{{c.1}}</th>
-                    {% if c.2 == "1" %}
+                    {% if c.2 == "0" %}
+                      <th><span class="badge bg-danger" style="color: white;">No Vigente</span></th>
+                    {% elif c.2 == "1" %}
                       <th><span class="badge bg-success" style="color: white;">Vigente</span></th>
                     {% else %}
-                      <th><span class="badge bg-danger" style="color: white;">No Vigente</span></th>
+                      <th><span class="badge bg-success" style="color: white;">Pago Extra</span></th>
                     {% endif %}
                     <th>${{c.3}}</th>
                     <th>{{c.4}}</th>

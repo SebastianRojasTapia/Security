@@ -209,8 +209,9 @@ def contratar(request):
                 return render(request,'plan.html',data)
 
         else:
-            contrato_obj = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente)
+            contrato_obj = Contrato.objects.order_by("fechacontrato").filter(rutcliente_id = cliente.rutcliente)
             contrato_obj = contrato_obj[0]
+            print(contrato_obj)
             contrato_obj = contrato_obj.vigente
 
             if contrato_obj == "1":
@@ -274,7 +275,7 @@ def contratar(request):
         return render(request,'plan.html',data)
 
 @login_required(login_url='/login/')
-def pagoExtra(request,extra_asesoria,extra_capacitacion):
+def ViewPagoExtra(request,extra_asesoria,extra_capacitacion):
 
     tipo_actividad = TipoActividad.objects.filter(Q(idtipoactividad = 2) | Q(idtipoactividad = 3))
     
@@ -288,9 +289,85 @@ def pagoExtra(request,extra_asesoria,extra_capacitacion):
         'capacitacion_monto':capacitacion.montoactividad,
         'asesoria_valor':capacitacion.montoactividad*extra_asesoria,
         'capacitacion_valor':capacitacion.montoactividad*extra_capacitacion,
-        'total': (capacitacion.montoactividad*extra_asesoria)+capacitacion.montoactividad*extra_capacitacion
+        'total': (asesoria.montoactividad*extra_asesoria)+capacitacion.montoactividad*extra_capacitacion
     }
+    
     return render(request,'pago_extra.html',data)
+ 
+
+@login_required(login_url='/login/')
+def PagoExtra(request):
+    user = request.user.get_username()
+    data = {}
+    tipo_actividad = TipoActividad.objects.filter(Q(idtipoactividad = 2) | Q(idtipoactividad = 3))
+    cliente = Cliente.objects.get(razonsocial = user)
+
+    asesoria = tipo_actividad[0]
+    capacitacion = tipo_actividad[1]
+    try:
+
+        if request.method == 'POST':
+            url = "https://localhost:7000/ComprobantePago/SaveComprobante"
+            cantidad_asesoria = request.POST.get('asesoria')
+            cantidad_capacitacion = request.POST.get('capacitacion')
+            numeroTarjeta = request.POST.get('numeroTarjeta')
+            nombreTitular = request.POST.get('nombreTitular')
+            mes = request.POST.get('mes')
+            anio = request.POST.get('anio')
+            fechaValida = mes+anio
+            cvv = request.POST.get('cvv')
+            monto = (asesoria.montoactividad*int(cantidad_asesoria))+(capacitacion.montoactividad*int(cantidad_capacitacion))
+            tipoMoneda = "USD"
+            canalPago = 1
+            descripcion = f"Asesoria : {cantidad_asesoria} - Capacitacion : {cantidad_capacitacion}"
+
+            headers = {'Content-Type': 'application/json'}
+
+            payload = json.dumps({
+                'numeroTarjeta':numeroTarjeta,
+                'nombreTitular':nombreTitular,
+                'fechaValida':fechaValida,
+                'monto':monto,
+                'tipoMoneda':tipoMoneda,
+                'cvv':cvv
+            })
+            
+            response = requests.request("POST", url, headers=headers, data=payload, verify=False )
+
+            if response.status_code == 200:
+                data = json.loads(response.content.decode('utf-8'))
+
+                idcomprobante = data['idcomprobante']
+                montoPago = data['montoPago']
+                message = data['message']
+                fechaRegistro = data['fecharegistro']
+                # Format la fecha para el ingreso a base de datos
+                fechaRegistro = fechaRegistro.replace("T","")
+                fechaRegistro = fechaRegistro[:-14]
+
+                contrato_obj = Contrato.objects.order_by("fechacontrato").filter(rutcliente_id = cliente.rutcliente)
+                contrato_obj = contrato_obj[0]
+                contrato_obj.asesoria_extra = 0 
+                contrato_obj.capacitacion_extra = 0 
+                contrato_obj.save()
+                
+                salida = SP_PAGO_EXTRA_CONTRATO(user,fechaRegistro,montoPago,canalPago,idcomprobante,descripcion)
+                if salida == 1:
+                    data['mensaje'] = message
+                    u = User.objects.get(username=user)
+                    url = f"https://localhost:7000/MailSender/SendPaymentEmail?emailFrom=soporte@security.com&emailTo={u.email}&nameTo={nombreTitular}&paymentData=Monto Cancelado: {monto}"
+
+                    payload = {}
+                    headers = {}
+
+                    response = requests.request("POST", url, headers=headers, data=payload, verify=False)
+                    return redirect('contratoCliente')
+                else:
+                    data['mensaje'] = 'Error al contratar el plan'
+        return redirect('contratoCliente')
+    except:
+        data['mensaje'] = 'Error al conectar al servidor'
+        return redirect('contratoCliente')
 
 @login_required(login_url='/login/')
 def asesoria(request):
@@ -300,90 +377,96 @@ def asesoria(request):
     user = request.user.get_username()
 
     cliente = Cliente.objects.get(razonsocial = user)
-    count = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente).count()
+    count = Contrato.objects.order_by("fechacontrato").filter(rutcliente_id = cliente.rutcliente).count()
 
     if count==0:
         return redirect('plan')
+    
     else:
-        contrato_obj = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente)
-        contrato_obj = contrato_obj[0]
-        if contrato_obj.vigente == "1":
+        try:
+            contrato_obj = Contrato.objects.order_by("fechacontrato").filter(rutcliente_id = cliente.rutcliente , vigente = "1")[:1].get()
 
-            if request.method == 'POST':
-                idTipoAsesoria = request.POST.get('tip_asesoria')
-                descripcion = request.POST.get('descripcion')
-                fecha_inicio = request.POST.get('fecha_inicio')
-                fecha_termino = request.POST.get('fecha_termino')
-                hora_inicio = request.POST.get('hora_inicio')
-                if hora_inicio is not None:
-                    hora_inicio = fecha_inicio+' '+hora_inicio
-                hora_termino = request.POST.get('hora_termino')
-                if hora_termino is not None:
-                    hora_termino = fecha_termino+' '+hora_termino
-                cant_asistentes = request.POST.get('cant_asistentes')
-                direccion = request.POST.get('direccion')
-                fecha_registro = datetime.now()
-                fecha_format = fecha_registro.strftime("%m%d%Y%H%M%S")
-                room = user +" "+ fecha_format
+            if contrato_obj.vigente == "1":
+                
+                if request.method == 'POST':
+                    idTipoAsesoria = request.POST.get('tip_asesoria')
+                    descripcion = request.POST.get('descripcion')
+                    fecha_inicio = request.POST.get('fecha_inicio')
+                    fecha_termino = request.POST.get('fecha_termino')
+                    hora_inicio = request.POST.get('hora_inicio')
+                    if hora_inicio is not None:
+                        hora_inicio = fecha_inicio+' '+hora_inicio
+                    hora_termino = request.POST.get('hora_termino')
+                    if hora_termino is not None:
+                        hora_termino = fecha_termino+' '+hora_termino
+                    cant_asistentes = request.POST.get('cant_asistentes')
+                    direccion = request.POST.get('direccion')
+                    fecha_registro = datetime.now()
+                    fecha_format = fecha_registro.strftime("%m%d%Y%H%M%S")
+                    room = user +" "+ fecha_format
 
-                salida = SP_INGRESAR_SOLICITUD(descripcion,fecha_inicio,fecha_termino,hora_inicio,hora_termino,cant_asistentes,fecha_registro,direccion,user,idTipoAsesoria)
+                    salida = SP_INGRESAR_SOLICITUD(descripcion,fecha_inicio,fecha_termino,hora_inicio,hora_termino,cant_asistentes,fecha_registro,direccion,user,idTipoAsesoria)
 
-                if contrato_obj.capacitacion_disponible <= 0 or contrato_obj.asesoria_disponible <= 0:
-                    
-                    if salida == 1:
+                    if contrato_obj.capacitacion_disponible <= 0 or contrato_obj.asesoria_disponible <= 0:
+                        
+                        if salida == 1:
 
-                        data['mensaje'] = 'Solicitud Ingresada'
-                        if idTipoAsesoria == "3":
-                            contrato_obj.capacitacion_extra = contrato_obj.capacitacion_extra + 1
-                            contrato_obj.save()
+                            data['mensaje'] = 'Solicitud Ingresada'
+                            if idTipoAsesoria == "3":
+                                contrato_obj.capacitacion_extra = contrato_obj.capacitacion_extra + 1
+                                contrato_obj.save()
 
-                        elif idTipoAsesoria == "4":
-                            new_room = Room(
-                            sala = room
-                            )
-                            new_room.save()
-                            data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
-                    
+                            elif idTipoAsesoria == "4":
+                                new_room = Room(
+                                sala = room
+                                )
+                                new_room.save()
+                                data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
+                        
+                            else:
+                                contrato_obj.asesoria_extra = contrato_obj.asesoria_extra + 1
+                                contrato_obj.save()
+
+                            data['extra'] = 'Supero el limite de su plan. Deberá pagar extra por estos servicios'
                         else:
-                            contrato_obj.asesoria_extra = contrato_obj.asesoria_extra + 1
-                            contrato_obj.save()
+                            data['mensaje'] = 'Error al ingresar solicitud'
 
-                        data['extra'] = 'Supero el limiete de su plan. Deberá pagar extra por estos servicios'
                     else:
-                        data['mensaje'] = 'Error al ingresar solicitud'
-                else:
-                    if salida == 1:
+                        if salida == 1:
 
-                        data['mensaje'] = 'Solicitud Ingresada'
+                            data['mensaje'] = 'Solicitud Ingresada'
 
-                        if idTipoAsesoria == "3":
-                            contrato_obj.capacitacion_disponible = contrato_obj.capacitacion_disponible - 1
-                            contrato_obj.save()
+                            if idTipoAsesoria == "3":
+                                contrato_obj.capacitacion_disponible = contrato_obj.capacitacion_disponible - 1
+                                contrato_obj.save()
 
-                        elif idTipoAsesoria == "4":
-                            new_room = Room(
-                            sala = room
-                            )
-                            new_room.save()
-                            data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
-                    
+                            elif idTipoAsesoria == "4":
+                                new_room = Room(
+                                sala = room
+                                )
+                                new_room.save()
+                                data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
+                        
+                            else:
+                                contrato_obj.asesoria_disponible = contrato_obj.asesoria_disponible - 1
+                                contrato_obj.save()
                         else:
-                            contrato_obj.asesoria_disponible = contrato_obj.asesoria_disponible - 1
-                            contrato_obj.save()
-                    else:
-                        data['mensaje'] = 'Error al ingresar solicitud'
+                            data['mensaje'] = 'Error al ingresar solicitud'
 
             return render(request,'asesoria.html',data)
-        if contrato_obj.vigente == "0":
-            contrato_caducado = Contrato.objects.order_by("-fechacontrato")
-            contrato_caducado = contrato_caducado[0]
+                
+        except:
+            contrato_caducado = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente , vigente = "0")[:1].get()
             fechaCaducado = contrato_caducado.fechacontrato
             fecha = fechaCaducado + timedelta(days=30)
 
             data['contrato_caducado'] = fecha
             data['expiro'] = "El plan Expiro el "
             data['mensaje'] = 'Debe Renovar el plan para acceder a nuestro servicio'
+
             return render(request,'plan.html',data)
+
+        
       
 @login_required(login_url='/login/')
 def perfil(request):
@@ -437,34 +520,30 @@ def perfil_cliente_plan(request):
         data['activo'] = 0
     
     else:
+        try:
+            contrato_obj = Contrato.objects.order_by("fechacontrato").filter(rutcliente_id = cliente.rutcliente , vigente = "1")[:1].get()
+            if contrato_obj.vigente == "1":
 
-        contrato_obj = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente)
-        contrato_obj = contrato_obj[0]
-        contrato_obj = contrato_obj.vigente
-        if contrato_obj == "1":
+                capacitacion = contrato_obj.capacitacion
+                asesoria = contrato_obj.asesoria
+                disponible_capacitacion = contrato_obj.capacitacion_disponible
+                disponible_asesoria = contrato_obj.asesoria_disponible
 
-            contrato_obj = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente)
-            contrato_obj = contrato_obj[0]
+                data['asesoria'] = asesoria
+                data['capacitacion'] = capacitacion
 
-            capacitacion = contrato_obj.capacitacion
-            asesoria = contrato_obj.asesoria
-            disponible_capacitacion = contrato_obj.capacitacion_disponible
-            disponible_asesoria = contrato_obj.asesoria_disponible
+                data['usado_asesoria'] = asesoria - disponible_asesoria
+                data['usado_capacitacion'] = capacitacion - disponible_capacitacion
+                
+                data['limite_asesoria'] = disponible_asesoria
+                data['limite_capacitacion'] = disponible_capacitacion
+                
 
-            data['asesoria'] = asesoria
-            data['capacitacion'] = capacitacion
+                data['extra_asesoria'] = contrato_obj.asesoria_extra
+                data['extra_capacitacion'] = contrato_obj.capacitacion_extra
 
-            data['usado_asesoria'] = asesoria - disponible_asesoria
-            data['usado_capacitacion'] = capacitacion - disponible_capacitacion
-            
-            data['limite_asesoria'] = disponible_asesoria
-            data['limite_capacitacion'] = disponible_capacitacion
-            
-
-            data['extra_asesoria'] = contrato_obj.asesoria_extra
-            data['extra_capacitacion'] = contrato_obj.capacitacion_extra
-
-        if contrato_obj == "0":
+                return render(request,'plan-cliente.html',data)
+        except:
             data['activo'] = 0
 
     return render(request,'plan-cliente.html',data)
@@ -794,6 +873,13 @@ def SP_CONTRATO_PAGO(razonSocial, fechaRegistro, montoPago, idCanalPago, idCompr
     cursor = django_cursor.connection.cursor()
     salida = cursor.var(cx_Oracle.NUMBER)
     cursor.callproc("SP_PAGO_CONTRATO",[razonSocial, fechaRegistro, montoPago, idCanalPago, idComprobantePago, descripcion, salida])
+    return salida.getvalue()
+
+def SP_PAGO_EXTRA_CONTRATO(razonSocial, fechaRegistro, montoPago, idCanalPago, idComprobantePago, descripcion):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    salida = cursor.var(cx_Oracle.NUMBER)
+    cursor.callproc("SP_PAGO_EXTRA_CONTRATO",[razonSocial, fechaRegistro, montoPago, idCanalPago, idComprobantePago, descripcion, salida])
     return salida.getvalue()
 
 def SP_INGRESAR_SOLICITUD(descripcion, fecha_inicio, fecha_termino, hora_inicio, hora_termino, cantAsistente, fecha_registro, direccion, razonSocial, idTipo):

@@ -92,8 +92,10 @@
               
                   </div>
               
-                  <form action="{% url 'contratar' %}" method="POST">
+                  <form action="{% url 'PagoExtra' %}" method="POST">
                     {% csrf_token %}
+                    <input type="hidden" maxlength="16" name="asesoria" value="{{extra_asesoria}}" required>
+                    <input type="hidden" maxlength="16" name="capacitacion" value="{{extra_capacitacion}}" required>
                     <div class="inputBox">
                         <span>Numero Tarjeta</span>
                         <input type="text" maxlength="16" class="card-number-input" name="numeroTarjeta" required>

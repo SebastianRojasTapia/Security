@@ -145,7 +145,7 @@
                     <p class="card-text text-center fs-sm">0 Capacitación Extra A Pagar</p>
                     {% endif %}
                     {% if extra_asesoria > 0 or extra_capacitacion > 0 %}
-                    <a href="{% url 'pagoExtra' extra_asesoria extra_capacitacion %}" class="btn btn-sm btn-primary d-flex justify-content-center">Pagar</a>
+                    <a href="{% url 'ViewPagoExtra' extra_asesoria extra_capacitacion %}" class="btn btn-sm btn-primary d-flex justify-content-center">Pagar</a>
                     {% else %}
                     {% endif %}
                   </div>
