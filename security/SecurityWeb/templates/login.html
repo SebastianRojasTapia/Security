@@ -23,7 +23,6 @@
         <div class="row">
             
             <div class="col-lg-6">
-                {% csrf_token %}
                 <div class="px-md-5">
                     <h3 class="modal-title mt-4 mb-0 text-center">Iniciar Sesión</h3>
                     <p class="font-size-sm text-muted text-center">Inicie sesión utilizando el usuario y la contraseña proporcionados durante el registro.</p>
@@ -36,7 +35,7 @@
                         <div class="form-group">
                         <label for="signin-password" class="form-label">Contraseña</label>
                         <div class="cs-password-toggle input-group-overlay">
-                            <input type="password" class="form-control appended-form-control" id="signin-password" name="pass" placeholder="Tu Contraseña">
+                            <input type="password" class="form-control appended-form-control" name="passLogin" placeholder="Tu Contraseña" required="">
                             <div class="input-group-append-overlay">
                             <label class="btn cs-password-toggle-btn input-group-text">
                                 <input type="checkbox" class="custom-control-input">
@@ -52,7 +51,7 @@
                         <button type="submit" class="btn btn-primary btn-block" name="login">Iniciar sesión</button>
                         <p class="font-size-sm pt-4 mb-0">
                         No tienes una cuenta?
-                        <a href="{% url 'LOG'%}"class="font-weight-bold text-decoration-none">Registrate</a>
+                        <a href="{% url 'LOG'%}" class="font-weight-bold text-decoration-none">Registrate</a>
                         </p>
                     </form>
                     <h3>{{msg}}</h3>
@@ -63,13 +62,13 @@
                 <div class="px-md-5">
                     <h3 class="modal-title mt-4 mb-0 text-center">Registro</h3>
                     <p class="font-size-sm text-muted text-center">Registrate en nuestro sitio web para contratar nuestros planes disponibles.</p>
-                    <form action="{% url 'LOG'%}" method="POST">
+                    <form action="{% url 'LOG'%}" method="POST" onsubmit="return validarCuenta()" novalidate>
                         {% csrf_token %}
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-lg-6 mb-3">
                                     <label for="signin-email">Rut</label>
-                                    <input type="text" class="form-control"  placeholder="Ingrese su Rut" required="" name="rut" id="rut">
+                                    <input type="text" class="form-control" placeholder="Ejemplo 10200300-4" required="" name="rut" id="rut">
                                 </div>
                                 <div class="col-lg-6 mb-3">
                                     <label for="signin-email">Razon Social</label>
@@ -77,12 +76,12 @@
                                 </div>
                                 <div class="col-lg-6 mb-3">
                                     <label for="signin-email">Número Contacto</label>
-                                    <input type="text" class="form-control"  placeholder="Ingrese su Telefono +569" pattern="\x2b[0-9]+" required="" name="numeroContacto" id="numeroContacto">
+                                    <input type="text" class="form-control"  placeholder="Ejemplo : +56 9" pattern="\x2b[0-9]+" required="" name="numeroContacto" id="numeroContacto">
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="signin-email">Rubro de la Empresa</label>
-                                    <select name="rubro" id="rubro" class="form-control" aria-label=".form-select-sm example" required>
-                                        <option value="Selecciona el Rubro">Selecciona el Rubro</option>
+                                    <select name="rubro" id="rubro" class="form-control" aria-label=".form-select-sm example" required="">
+                                        <option value="">Selecciona el Rubro</option>
                                         {% for c in rubro %}
                                         <option value="{{c.0}}">{{c.1}}</option>
                                         {% endfor %}
@@ -90,6 +89,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="form-group">
                             <label for="signin-email">Correo Electrónico</label>
                             <input type="email" class="form-control" placeholder="Ingrese su Electrónico" name="correo" id="correo" required="">
@@ -97,7 +97,7 @@
                         <div class="form-group">
                             <label for="signin-password" class="form-label">Contraseña</label>
                             <div class="cs-password-toggle input-group-overlay">
-                            <input type="password" class="form-control appended-form-control" id="signin-password" placeholder="Ingresa tu Contraseña" name="pass" required="">
+                            <input type="password" class="form-control appended-form-control" placeholder="Ingresa tu Contraseña" name="passRegister" id="passRegister" required="">
                             <div class="input-group-append-overlay">
                                 <label class="btn cs-password-toggle-btn input-group-text">
                                 <input type="checkbox" class="custom-control-input">
@@ -117,4 +117,5 @@
         </div>
     </section>
 </main>
+
 {% endblock contenido %}

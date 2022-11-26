@@ -23,11 +23,10 @@
         <div class="row">
             
             <div class="col-lg-6">
-                {% csrf_token %}
                 <div class="px-md-5">
                     <h3 class="modal-title mt-4 mb-0 text-center">Iniciar Sesión Profesional</h3>
                     <p class="font-size-sm text-muted text-center">Inicie sesión utilizando el usuario y la contraseña proporcionados durante el registro.</p>
-                    <form action="{% url 'LOG'%}" method="POST">
+                    <form action="{% url 'LOGPROFE'%}" method="POST">
                         {% csrf_token %}
                         <div class="form-group">
                         <label for="signin-email">Usuario</label>
@@ -36,7 +35,7 @@
                         <div class="form-group">
                         <label for="signin-password" class="form-label">Contraseña</label>
                         <div class="cs-password-toggle input-group-overlay">
-                            <input type="password" class="form-control appended-form-control" id="signin-password" name="pass" placeholder="Tu Contraseña">
+                            <input type="password" class="form-control appended-form-control" name="pass" placeholder="Tu Contraseña">
                             <div class="input-group-append-overlay">
                             <label class="btn cs-password-toggle-btn input-group-text">
                                 <input type="checkbox" class="custom-control-input">
@@ -63,35 +62,35 @@
                 <div class="px-md-5">
                     <h3 class="modal-title mt-4 mb-0 text-center">Registro Profesional</h3>
                     <p class="font-size-sm text-muted text-center">Trabaja con Nosotros</p>
-                    <form action="{% url 'LOG'%}" method="POST">
+                    <form action="{% url 'LOGPROFE'%}" method="POST" onsubmit="return validarCuentaProfesional()">
                         {% csrf_token %}
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-lg-6 mb-3">
                                     <label for="signin-email">Rut</label>
-                                    <input type="text" class="form-control"  placeholder="Ingrese su Rut" required="" name="rut" id="rut">
+                                    <input type="text" class="form-control" placeholder="Ingrese su Rut" required="" name="rut" id="rut">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-lg-6 mb-3">
                                     <label for="signin-email">Primer Nombre</label>
-                                    <input type="text" class="form-control"  placeholder="Ingrese su Primer Nombre" required="" name="primerNombre" id="primerNombre">
+                                    <input type="text" class="form-control" placeholder="Ingrese su Primer Nombre" required="" name="primerNombre" id="primerNombre">
                                 </div>
                                 <div class="col-lg-6 mb-3">
                                     <label for="signin-email">Segundo Nombre</label>
-                                    <input type="text" class="form-control"  placeholder="Ingrese su Segundo Nombre" name="segundoNombre" id="segundoNombre">
+                                    <input type="text" class="form-control" placeholder="Ingrese su Segundo Nombre" name="segundoNombre" id="segundoNombre">
                                 </div>
                                 <div class="col-lg-6 mb-3">
                                     <label for="signin-email">Primer Apellido</label>
-                                    <input type="text" class="form-control"  placeholder="Ingrese su Primer Apellido" required="" name="primerApelido" id="primerApelido">
+                                    <input type="text" class="form-control" placeholder="Ingrese su Primer Apellido" required="" name="primerApelido" id="primerApelido">
                                 </div>
                                 <div class="col-lg-6 mb-3">
                                     <label for="signin-email">Segundo Apellido</label>
-                                    <input type="text" class="form-control"  placeholder="Ingrese su Segundo Apellido" required="" name="segundoApelido" id="segundoApelido">
+                                    <input type="text" class="form-control" placeholder="Ingrese su Segundo Apellido" required="" name="segundoApelido" id="segundoApelido">
                                 </div>
                                 <div class="col-lg-6 mb-3">
                                     <label for="signin-email">Número Contacto</label>
-                                    <input type="text" class="form-control"  placeholder="Ingrese su Telefono +569" pattern="\x2b[0-9]+" required="" name="numeroContacto" id="numeroContacto">
+                                    <input type="text" class="form-control" placeholder="Ingrese su Telefono +569" required name="numeroContacto" id="numeroContacto">
                                 </div>
                             </div>
                         </div>
@@ -102,7 +101,7 @@
                         <div class="form-group">
                             <label for="signin-password" class="form-label">Contraseña</label>
                             <div class="cs-password-toggle input-group-overlay">
-                            <input type="password" class="form-control appended-form-control" id="signin-password" placeholder="Ingresa tu Contraseña" name="pass" required="">
+                            <input type="password" class="form-control appended-form-control" placeholder="Ingresa tu Contraseña" name="pass" id="pass" required="">
                             <div class="input-group-append-overlay">
                                 <label class="btn cs-password-toggle-btn input-group-text">
                                 <input type="checkbox" class="custom-control-input">

@@ -31,13 +31,13 @@
             <div class="d-flex align-items-center justify-content-between mb-4 pb-1 pb-sm-3">
               <h1 class="h2 mb-0">Asesoria</h1>
             </div>
-            <form action="{% url 'asesoria'%}" method="POST">
+            <form action="{% url 'asesoria'%}" method="POST" onsubmit="return validarAsesoria()">
             {% csrf_token %}
             <div class="row">
                 <div class="col-3"></div>
                 <div class="col-lg-6 mb-4">
                     <label for="signin-email">Elige tu Asesoria</label>
-                    <select class="form-control" aria-label=".form-select-sm example" name="tip_asesoria" id="tip_asesoria" onchange="carg(this)" required>
+                    <select class="form-control" aria-label=".form-select-sm example" name="tip_asesoria" id="tip_asesoria"  onchange="carg(this)" required>
                         <option value="">Selecciona la Asesoria</option>
                         {% for c in tipo_actividad %}
                         <option value="{{c.0}}">{{c.1}}</option>
@@ -50,31 +50,31 @@
             
                 <div class="col-sm-4 form-group">
                     <label for="ac-fn">Descripcion</label>
-                    <input type="text" class="form-control form-control-lg" name="descripcion" id="descripcion" required>
+                    <input type="text" class="form-control form-control-lg" name="descripcion" id="descripcion" required disabled>
                 </div>
                 <div class="col-sm-4 form-group">
                     <label for="ac-ln">Fecha Inicio</label>
-                    <input type="date" class="form-control form-control-lg" name="fecha_inicio" id="fecha_inicio" required>
+                    <input type="date" class="form-control form-control-lg" name="fecha_inicio" id="fecha_inicio" min="2022-06-01" required disabled>
                 </div>
                 <div class="col-sm-4 form-group">
                     <label for="ac-ln">Fecha Termino</label>
-                    <input type="date" class="form-control form-control-lg" name="fecha_termino" id="fecha_termino" required>
+                    <input type="date" class="form-control form-control-lg" name="fecha_termino" id="fecha_termino" required disabled>
                 </div>
                 <div class="col-sm-4 form-group">
                     <label for="ac-ln">Hora Inicio</label>
-                    <input type="time" min="09:00" max="18:00" step="1800" class="form-control form-control-lg" name="hora_inicio" id="hora_inicio" required>
+                    <input type="time" min="09:00" max="18:00" step="1800" class="form-control form-control-lg" name="hora_inicio" id="hora_inicio" required disabled>
                 </div>
                 <div class="col-sm-4 form-group">
                     <label for="ac-ln">Hora Termino</label>
-                    <input type="time" min="09:00" max="18:00" step="1800" class="form-control form-control-lg" name="hora_termino" id="hora_termino" required>
+                    <input type="time" min="09:00" max="18:00" step="1800" class="form-control form-control-lg" name="hora_termino" id="hora_termino" required disabled>
                 </div>
                 <div class="col-sm-4 form-group">
                     <label for="ac-fn">Cantidad de Asistentes</label>
-                    <input type="number" class="form-control form-control-lg" name="cant_asistentes" id="cant_asistentes" required>
+                    <input type="number" class="form-control form-control-lg" name="cant_asistentes" id="cant_asistentes" required disabled>
                 </div>
                 <div class="col-sm-4 form-group">
                     <label for="ac-fn">Dirección</label>
-                    <input type="text" class="form-control form-control-lg" name="direccion" id="direccion" required>
+                    <input type="text" class="form-control form-control-lg" name="direccion" id="direccion" required disabled>
                 </div>
     
             </div>
@@ -88,74 +88,6 @@
           </div>
         </div>
       </section>
-
-<script>
-
-    var descripcion = document.getElementById('descripcion');
-    var direccion = document.getElementById('direccion');
-    var cant_asist = document.getElementById('cant_asistentes');
-    var fecha_inicio = document.getElementById('fecha_inicio');
-    var fecha_termino = document.getElementById('fecha_termino');
-    var hora_inicio = document.getElementById('hora_inicio');
-    var hora_termino = document.getElementById('hora_termino');
-
-    function limpiar(){
-        descripcion.value = "";
-        direccion.value = "";
-        cant_asist.value = "";
-        fecha_inicio.value = "";
-        fecha_termino.value = "";
-        hora_inicio.value = "";
-        hora_termino.value = "";
-    }
-
-    function carg(elemento) {
-        d = elemento.value;
-        
-        if(d == "1"){ 
-            cant_asist.disabled = true;
-            direccion.disabled = false;
-            fecha_inicio.disabled = false;
-            fecha_termino.disabled = false;
-            hora_inicio.disabled = false;
-            hora_termino.disabled = false;
-        }
-        if(d == "2"){
-            direccion.disabled = true;
-            cant_asist.disabled = true;
-            fecha_inicio.disabled = true;
-            fecha_termino.disabled = true;
-            hora_inicio.disabled = true;
-            hora_termino.disabled = true;
-        }
-        if(d == "3"){
-            direccion.disabled = false;
-            cant_asist.disabled = false;
-            fecha_inicio.disabled = false;
-            fecha_termino.disabled = false;
-            hora_inicio.disabled = false;
-            hora_termino.disabled = false;
-        }
-        if(d == "4"){
-            direccion.disabled = false;
-            cant_asist.disabled = true;
-            fecha_inicio.disabled = false;
-            fecha_termino.disabled = true;
-            hora_inicio.disabled = true;
-            hora_termino.disabled = true;
-        }
-        if(d == "5"){
-            direccion.disabled = true;
-            cant_asist.disabled = true;
-            fecha_inicio.disabled = true;
-            fecha_termino.disabled = true;
-            hora_inicio.disabled = true;
-            hora_termino.disabled = true;
-        }
-    limpiar()
-
-    }
-</script>
-
 </main>
+
 {% endblock contenido %}

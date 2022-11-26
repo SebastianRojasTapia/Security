@@ -50,7 +50,7 @@ def login(request):
         numeroContacto = request.POST.get('numeroContacto')
         rubro = request.POST.get('rubro')
         correo = request.POST.get('correo')
-        contrasena = request.POST.get('pass')
+        contrasena = request.POST.get('passRegister')
         try:
             u = User.objects.get(username=razonSocial)
             data['mensaje'] = 'Usuario ya ingresado'
@@ -72,7 +72,7 @@ def login(request):
 
     elif 'login' in request.POST:
         user = request.POST.get("user")
-        password = request.POST.get("pass")
+        password = request.POST.get("passLogin")
         us = authenticate(request,username=user,password=password)
         if us is not None and us.is_active:
             login_autent(request,us)
@@ -82,6 +82,7 @@ def login(request):
 
     return render(request,'login.html',data)
 
+@permission_required('admin.delete_session',login_url='/login/')
 def loginProfesional(request):
     data = {}
 
@@ -294,7 +295,6 @@ def ViewPagoExtra(request,extra_asesoria,extra_capacitacion):
     
     return render(request,'pago_extra.html',data)
  
-
 @login_required(login_url='/login/')
 def PagoExtra(request):
     user = request.user.get_username()
@@ -407,52 +407,62 @@ def asesoria(request):
 
                     salida = SP_INGRESAR_SOLICITUD(descripcion,fecha_inicio,fecha_termino,hora_inicio,hora_termino,cant_asistentes,fecha_registro,direccion,user,idTipoAsesoria)
 
-                    if contrato_obj.capacitacion_disponible <= 0 or contrato_obj.asesoria_disponible <= 0:
-                        
-                        if salida == 1:
+                    if salida == 1:
+                        if idTipoAsesoria == "3":
+                            if contrato_obj.capacitacion_disponible == 0:
 
-                            data['mensaje'] = 'Solicitud Ingresada'
-                            if idTipoAsesoria == "3":
                                 contrato_obj.capacitacion_extra = contrato_obj.capacitacion_extra + 1
                                 contrato_obj.save()
+                                data['extra'] = 'Supero el limite de su plan. Deberá pagar extra por este servicio.'
+                                data['mensaje'] = 'Solicitud Ingresada'
 
-                            elif idTipoAsesoria == "4":
-                                new_room = Room(
-                                sala = room
-                                )
-                                new_room.save()
-                                data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
-                        
                             else:
-                                contrato_obj.asesoria_extra = contrato_obj.asesoria_extra + 1
-                                contrato_obj.save()
 
-                            data['extra'] = 'Supero el limite de su plan. Deberá pagar extra por estos servicios'
-                        else:
-                            data['mensaje'] = 'Error al ingresar solicitud'
-
-                    else:
-                        if salida == 1:
-
-                            data['mensaje'] = 'Solicitud Ingresada'
-
-                            if idTipoAsesoria == "3":
                                 contrato_obj.capacitacion_disponible = contrato_obj.capacitacion_disponible - 1
                                 contrato_obj.save()
+                                data['mensaje'] = 'Solicitud Ingresada'
 
-                            elif idTipoAsesoria == "4":
-                                new_room = Room(
-                                sala = room
-                                )
+                        elif idTipoAsesoria == "4":
+
+                            if contrato_obj.asesoria_disponible == 0:
+
+                                contrato_obj.asesoria_extra = contrato_obj.asesoria_extra + 1
+                                contrato_obj.save()
+                                
+                                new_room = Room(sala = room)
+                                
                                 new_room.save()
                                 data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
-                        
+
+                                data['extra'] = 'Supero el limite de su plan. Deberá pagar extra por este servicio.'
+                                
                             else:
                                 contrato_obj.asesoria_disponible = contrato_obj.asesoria_disponible - 1
                                 contrato_obj.save()
-                        else:
-                            data['mensaje'] = 'Error al ingresar solicitud'
 
+                                new_room = Room(sala = room)
+                                
+                                new_room.save()
+                                data['sala'] = "Ingresa con este sala ""Sala de Comunicaciones"" : " + room
+
+                                data['mensaje'] = 'Solicitud Ingresada'
+                        
+                        else:
+                            if contrato_obj.asesoria_disponible == 0:
+                                contrato_obj.asesoria_extra = contrato_obj.asesoria_extra + 1
+                                contrato_obj.save()
+
+                                data['extra'] = 'Supero el limite de su plan. Deberá pagar extra por este servicio.'
+
+                                data['mensaje'] = 'Solicitud Ingresada'
+                            
+                            else:
+                                contrato_obj.asesoria_disponible = contrato_obj.asesoria_disponible - 1
+                                contrato_obj.save()
+                                data['mensaje'] = 'Solicitud Ingresada'                    
+                
+                    else:
+                        data['mensaje'] = 'Error al ingresar solicitud'
             return render(request,'asesoria.html',data)
                 
         except:
@@ -465,9 +475,7 @@ def asesoria(request):
             data['mensaje'] = 'Debe Renovar el plan para acceder a nuestro servicio'
 
             return render(request,'plan.html',data)
-
-        
-      
+    
 @login_required(login_url='/login/')
 def perfil(request):
     

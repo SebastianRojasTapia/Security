@@ -20,10 +20,13 @@
   
   <!-- Main Theme Styles + Bootstrap-->
   
+  <link rel="stylesheet" media="screen" href="{% static 'dist/css/sweetalert2.min.css'%}">
   <link rel="stylesheet" media="screen" href="{% static 'dist/css/theme.min.css'%}">
   <link rel="stylesheet" href="{% static 'dist/css/simplebar.min.css'%}">
   <link rel="stylesheet" href="{% static 'dist/css/nouislider.min.css'%}">
   <link rel="stylesheet" href="{% static 'dist/css/tarjeta.css'%}"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  
   <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
 
    <!-- Page loading styles-->
@@ -195,26 +198,36 @@
           <!-- Toolbar -->
           <div class="d-flex align-items-center order-lg-3">
             <ul class="nav nav-tools flex-nowrap">
-              {% if user.is_authenticated %}
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown" class="nav-link">Bienvenido @{{user.username}}</a>
-                <ul class="dropdown-menu">
-                  {% if perms.SecurityWeb.add_check %}
-                  <li><a href="{% url 'perfilProfesional'%}" class="dropdown-item"><i class="fa-regular fa-user font-size-sm mr-2"></i>Perfil Profesional</a></i></li>
-                  <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
-                  {% else %}
-                  <li><a href="{% url 'perfil'%}" class="dropdown-item"><i class="fa-regular fa-user font-size-sm mr-2"></i>Perfil</a></i></li>
-                  <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
-                  {% endif %}
-                </ul>
-              </li>       
+              {% if perms.admin.delete_session %}
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" data-toggle="dropdown" class="nav-link">Bienvenido @{{user.username}}</a>
+                  <ul class="dropdown-menu">
+                      <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
+                  </ul>
+                </li>       
               {% else %}
-              <li class="nav-item align-self-center mb-0">
-                <a href="{% url 'LOG' %}" class="nav-tool pr-lg-0">
-                  <span class="btn btn-primary font-size-ms">Ingresar</span>
-                </a>
-              </li>
+                {% if user.is_authenticated %}
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" class="nav-link">Bienvenido @{{user.username}}</a>
+                    <ul class="dropdown-menu">
+                      {% if perms.SecurityWeb.add_check %}
+                        <li><a href="{% url 'perfilProfesional'%}" class="dropdown-item"><i class="fa-regular fa-user font-size-sm mr-2"></i>Perfil Profesional</a></i></li>
+                        <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
+                      {% else %}
+                        <li><a href="{% url 'perfil'%}" class="dropdown-item"><i class="fa-regular fa-user font-size-sm mr-2"></i>Perfil</a></i></li>
+                        <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
+                      {% endif %}
+                    </ul>
+                  </li>       
+                {% else %}
+                  <li class="nav-item align-self-center mb-0">
+                    <a href="{% url 'LOG' %}" class="nav-tool pr-lg-0">
+                      <span class="btn btn-primary font-size-ms">Ingresar</span>
+                    </a>
+                  </li>
+                {% endif %}
               {% endif %}
+              
               <li class="divider-vertical mb-0 d-lg-none d-block"></li>
               <li class="nav-item mb-0">
                 <button class="navbar-toggler mt-n1 mr-n3" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-expanded="false">
@@ -233,62 +246,69 @@
           <nav class="collapse navbar-collapse order-lg-2" id="navbarCollapse">
             <!-- Menu -->
             <ul class="navbar-nav mr-auto">
-              {% if user.is_authenticated %}
+              {% if perms.admin.delete_session%}
               <li class="nav-item">
-                <a href="{% url 'index' %}" class="nav-link">Inicio</a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'misionVision' %}"class="nav-link">Mision y Visión</a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'plan' %}" class="nav-link">Plan</a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'contacto' %}" class="nav-link">Contáctanos</a>
-              </li>
-              {% if perms.SecurityWeb.add_check %}
-              <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Mantenedores</a>
-                <ul class="dropdown-menu">
-                  <li><a href="{% url 'check' %}" class="dropdown-item">Ingresar Check List</a></li>
-                  <li><a href="{% url 'check_list_index' %}" class="dropdown-item">Listar Check List</a></li>
-                  <li><a href="{% url 'listadoActividad' %}" class="dropdown-item">Lista Actividades</a></li>
-                </ul>
-              </li>
-              <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Comunicación</a>
-                <ul class="dropdown-menu">
-                  <a href="{% url 'home' %}" class="dropdown-item">Sala Comunicaciones</a>
-                  <li><a href="{% url 'listaChat' %}" class="dropdown-item">Listado Sala de Comunicación</a></li>
-                </ul>
+                <a href="{% url 'LOGPROFE' %}" class="nav-link">Registrar Profesional</a>
               </li>
               {% else %}
-              <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Solicitudes</a>
-                <ul class="dropdown-menu">
-                  <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Asesoria</a></li>
-                  <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Reporte</a></li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'home' %}" class="nav-link">Sala Comunicaciones</a>
-              </li>
+                {% if user.is_authenticated %}
+                  <li class="nav-item">
+                    <a href="{% url 'index' %}" class="nav-link">Inicio</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'misionVision' %}"class="nav-link">Mision y Visión</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'plan' %}" class="nav-link">Plan</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'contacto' %}" class="nav-link">Contáctanos</a>
+                  </li>
+                  {% if perms.SecurityWeb.add_check %}
+                    <li class="nav-item dropdown">
+                      <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Mantenedores</a>
+                      <ul class="dropdown-menu">
+                        <li><a href="{% url 'check' %}" class="dropdown-item">Ingresar Check List</a></li>
+                        <li><a href="{% url 'check_list_index' %}" class="dropdown-item">Listar Check List</a></li>
+                        <li><a href="{% url 'listadoActividad' %}" class="dropdown-item">Lista Actividades</a></li>
+                      </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Comunicación</a>
+                      <ul class="dropdown-menu">
+                        <a href="{% url 'home' %}" class="dropdown-item">Sala Comunicaciones</a>
+                        <li><a href="{% url 'listaChat' %}" class="dropdown-item">Listado Sala de Comunicación</a></li>
+                      </ul>
+                    </li>
+                  {% else %}
+                    <li class="nav-item dropdown">
+                      <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Solicitudes</a>
+                      <ul class="dropdown-menu">
+                        <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Asesoria</a></li>
+                        <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Reporte</a></li>
+                      </ul>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{% url 'home' %}" class="nav-link">Sala Comunicaciones</a>
+                    </li>
+                  {% endif %}
+                
+                {% else %}
+                  <li class="nav-item">
+                    <a href="{% url 'index' %}" class="nav-link">Inicio</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'misionVision' %}"class="nav-link">Mision y Visión</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'plan' %}" class="nav-link">Plan</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'contacto' %}" class="nav-link">Contáctanos</a>
+                  </li>
+                {% endif %}
               {% endif %}
               
-              {% else %}
-              <li class="nav-item">
-                <a href="{% url 'index' %}" class="nav-link">Inicio</a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'misionVision' %}"class="nav-link">Mision y Visión</a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'plan' %}" class="nav-link">Plan</a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'contacto' %}" class="nav-link">Contáctanos</a>
-              </li>
-              {% endif %}
             </ul>
           </nav>
         </div>
@@ -401,6 +421,9 @@
     <i class="btn-scroll-top-icon cxi-angle-up"></i>
   </a>
 
+
+
+  <script src="{% static 'dist/js/sweetalert2.all.min.js'%}"></script>
   <!-- Vendor scripts: js libraries and plugins-->
   <script src="{% static 'dist/vendor/jquery/dist/jquery.slim.min.js'%}"></script>
   <script src="{% static 'dist/vendor/bootstrap/dist/js/bootstrap.bundle.min.js'%}"></script>
@@ -408,6 +431,12 @@
   <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
   
+  <script src="{% static 'dist/js/validaciones/registroCliente.js'%}"></script>
+  <script src="{% static 'dist/js/validaciones/registroProfesional.js'%}"></script>
+  <script src="{% static 'dist/js/validaciones/modificarPerfil.js'%}"></script>
+  <script src="{% static 'dist/js/validaciones/Asesoria.js'%}"></script>
+
+
   <script src="{% static 'dist/js/simplebar.min.js'%}"></script>
   <script src="{% static 'dist/js/nouislider.min.js'%}"></script>
   <script src="{% static 'dist/js/smooth-scroll.polyfills.min.js'%}"></script>
