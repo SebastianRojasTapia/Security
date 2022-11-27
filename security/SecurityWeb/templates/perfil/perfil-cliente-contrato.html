@@ -15,7 +15,7 @@
             <li class="breadcrumb-item">
                 <i class="fa-solid fa-angle-right"></i>
             </li>
-            <li class="breadcrumb-item active" aria-current="page">Registro Asesoria</li>
+            <li class="breadcrumb-item active" aria-current="page">Contratos</li>
             </ol>
             
         </div>
@@ -46,24 +46,20 @@
                         <i class="fa-regular fa-user font-size-sm mr-2"></i>
                         <span>Mi Perfil</span>
                       </a>
-                      <a href="{% url 'clientePlan'%}" class="list-group-item list-group-item-action d-flex align-items-center">
+                      <a href="{% url 'clientePlan' %}" class="list-group-item list-group-item-action d-flex align-items-center">
                         <i class="fa-solid fa-arrows-rotate font-size-sm mr-2"></i>
                         <span>Plan</span>
                       </a>
-                      <a href="{% url 'contratoCliente'%}" class="list-group-item list-group-item-action d-flex align-items-center">
+                      <a href="{% url 'contratoCliente'%}" class="list-group-item list-group-item-action d-flex align-items-center active">
                         <i class="fas fa-file-contract font-size-sm mr-2"></i>
                         <span>Contratos</span>
-                      </a>
-                      <a href="{% url 'asesoriaCliente' %}" class="list-group-item list-group-item-action d-flex align-items-center active">
-                        <i class="far fa-file font-size-sm mr-2"></i>
-                        <span>Registro de Asesoria</span>
                         {% for c in count %}
                         <span class="badge badge-warning ml-auto">{{c.0}}</span>
                         {% endfor %}
                       </a>
-                      <a href="" class="list-group-item list-group-item-action d-flex align-items-center">
-                        <i class="fas fa-chart-line font-size-sm mr-2"></i>
-                        <span>Reportes</span>
+                      <a href="{% url 'asesoriaCliente' %}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="far fa-file font-size-sm mr-2"></i>
+                        <span>Registro de Asesoria</span>
                       </a>
                       <a href="{% url 'LOGOUT'%}" class="list-group-item list-group-item-action d-flex align-items-center">
                         <i class="fas fa-sign-out-alt font-size-sm mr-2"></i>
@@ -79,44 +75,36 @@
           <!-- Content -->
           <div class="col-lg-8 ml-auto">
             <div class="d-flex align-items-center justify-content-between mb-4 pb-1 pb-sm-3">
-              <h1 class="h2 mb-0">Registro de Asesoria</h1>
+              <h1 class="h2 mb-0">Registro de contratos</h1>
             </div>
             <!-- Basic table -->
             <div class="table-responsive" style="white-space: nowrap; overflow-x: auto;">
-              <table class="table table-hover">
+              <table class="table align-middle">
                 <thead>
                   <tr>
                     <th>Nº</th>
                     <th>Descripcion</th>
-                    <th>Fecha Inicio</th>
-                    <th>Fecha Termino</th>
-                    <th>Hora Inicio</th>
-                    <th>Hora Termino</th>
-                    <th>Cant. Personas</th>
-                    <th>Dirección</th>
-                    <th>Actividad</th>
-                    <th>Profesional</th>
+                    <th>Estado Del Contrato</th>
+                    <th>Valor</th>
+                    <th>Registro Contrato</th>
+                    <th>Fecha Caducidad</th>
                   </tr>
                 </thead>
-
                 <tbody>
-                  {% for c in asesoria %}
+                  {% for c in contrato %}
                   <tr>
                     <th>{{c.0}}</th>
                     <th>{{c.1}}</th>
-                    <th>{{c.2}}</th>
-                    <th>{{c.3}}</th>
+                    {% if c.2 == "0" %}
+                      <th><span class="badge bg-danger" style="color: white;">No Vigente</span></th>
+                    {% elif c.2 == "1" %}
+                      <th><span class="badge bg-success" style="color: white;">Vigente</span></th>
+                    {% else %}
+                      <th><span class="badge bg-success" style="color: white;">Pago Extra</span></th>
+                    {% endif %}
+                    <th>${{c.3}}</th>
                     <th>{{c.4}}</th>
                     <th>{{c.5}}</th>
-                    <th>{{c.6}}</th>
-                    <th>{{c.7}}</th>
-                    <th>{{c.8}}</th>
-                    {% if c.9 is None %}
-                      <th><span class="badge bg-warning" style="color: white;">No Asignado</span></th>
-                    
-                    {% else %}
-                      <th><span class="badge bg-success" style="color: white;">{{c.9}} {{c.10}}</span></th>
-                    {% endif %}
                   </tr>
                   {% endfor %}
                 </tbody>

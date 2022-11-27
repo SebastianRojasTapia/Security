@@ -27,18 +27,23 @@ import json
 
 # Create your views here.
 
+# Se crea la vista index de la página
 def index(request):
     return render(request,'index.html')
 
+# Se crea la vista contacto de la página
 def contacto(request):
     return render(request,'contacto.html')
 
+# Se crea la vista vision y mision de la página
 def visionMision(request):
     return render(request,'vision-mision.html')
 
+# Se crea la vista plan de la página
 def plan(request):
     return render(request,'plan.html')
 
+# Se crea la vista login del cliente de la página
 def login(request):
     data = {
         'rubro':listar_rubro()
@@ -56,7 +61,7 @@ def login(request):
             data['mensaje'] = 'Usuario ya ingresado'
             u = User.objects.get(email=correo)
             data['mensaje'] = 'Correo ya ingresado'
-            return render(request,'login.html',data)
+            return render(request,'login/login.html',data)
         except:
             u = User()
             u.username = razonSocial
@@ -68,7 +73,7 @@ def login(request):
             data['mensaje'] = 'Se registro correctamente.'
         else:
             data['mensaje'] = 'Error en el registro vuelva intentar.'
-        return render(request,'login.html',data)
+        return render(request,'login/login.html',data)
 
     elif 'login' in request.POST:
         user = request.POST.get("user")
@@ -78,10 +83,11 @@ def login(request):
             login_autent(request,us)
             return render(request,'index.html',{'user':us})
         else:
-            return render(request,'login.html',{'msg':'Usuario o contraseña incorrecta'})
+            return render(request,'login/login.html',{'msg':'Usuario o contraseña incorrecta'})
 
-    return render(request,'login.html',data)
+    return render(request,'login/login.html',data)
 
+# Se crea la vista login del profesional de la página
 @permission_required('admin.delete_session',login_url='/login/')
 def loginProfesional(request):
     data = {}
@@ -103,7 +109,7 @@ def loginProfesional(request):
             data['mensaje'] = 'Usuario ya ingresado'
             u = User.objects.get(email=correo)
             data['mensaje'] = 'Correo ya ingresado'
-            return render(request,'loginProfesional.html',data)
+            return render(request,'login/loginProfesional.html',data)
         except:
             u = User()
             u.username = name
@@ -125,8 +131,8 @@ def loginProfesional(request):
                 data['mensaje'] = 'Se registro correctamente.'
             else:
                 data['mensaje'] = 'Error en el registro vuelva intentar.'
-                return render(request,'loginProfesional.html',data)
-        return render(request,'loginProfesional.html',data)
+                return render(request,'login/loginProfesional.html',data)
+        return render(request,'login/loginProfesional.html',data)
 
     elif 'login' in request.POST:
         user = request.POST.get("user")
@@ -136,24 +142,28 @@ def loginProfesional(request):
             login_autent(request,us)
             return render(request,'index.html',{'user':us})
         else:
-            return render(request,'loginProfesional.html',{'msg':'Usuario o contraseña incorrecta'})
+            return render(request,'login/loginProfesional.html',{'msg':'Usuario o contraseña incorrecta'})
 
-    return render(request,'loginProfesional.html',data)
+    return render(request,'login/loginProfesional.html',data)
 
+# Se crea el cierre de sesion de la página
 def logout_vista(request):
     data = {
         'rubro':listar_rubro()
     }
     logout(request)
-    return render(request,'login.html',data)
+    return render(request,'login/login.html',data)
 
+# Se crea la funcion contratar servicio de la página
 @login_required(login_url='/login/')
 def contratar(request):
     user = request.user.get_username()
     data = {}
     try:
 
+        #se traen los atributos del cliente
         cliente = Cliente.objects.get(razonsocial = user)
+        #se cuenta la cantidad de contratos por el cliente para realzar la validacion
         count = Contrato.objects.order_by("-fechacontrato").filter(rutcliente_id = cliente.rutcliente).count()
 
         if count==0:
@@ -275,6 +285,7 @@ def contratar(request):
         data['mensaje'] = 'Error al conectar al servidor'
         return render(request,'plan.html',data)
 
+# Se crea la vista pago extra del servicio solicitado de la página
 @login_required(login_url='/login/')
 def ViewPagoExtra(request,extra_asesoria,extra_capacitacion):
 
@@ -295,6 +306,7 @@ def ViewPagoExtra(request,extra_asesoria,extra_capacitacion):
     
     return render(request,'pago_extra.html',data)
  
+# Se crea la funcion pagar servicio extra de la página
 @login_required(login_url='/login/')
 def PagoExtra(request):
     user = request.user.get_username()
@@ -369,6 +381,7 @@ def PagoExtra(request):
         data['mensaje'] = 'Error al conectar al servidor'
         return redirect('contratoCliente')
 
+# Se crea la funcion solicitar asesoria
 @login_required(login_url='/login/')
 def asesoria(request):
     data = {
@@ -475,15 +488,12 @@ def asesoria(request):
             data['mensaje'] = 'Debe Renovar el plan para acceder a nuestro servicio'
 
             return render(request,'plan.html',data)
-    
+
+# Se crea la funcion modificar el perfil cliente
 @login_required(login_url='/login/')
 def perfil(request):
-    
     user = request.user.get_username()
-
-    data = {'solicitud':listar_usuario(user),
-            'count':count_asesoria_cliente(user)
-    }
+    data = {'solicitud':listar_usuario(user),'count':count_asesoria_cliente(user)}
    
     if request.method == 'POST':
         correo = request.POST.get('email')
@@ -511,14 +521,14 @@ def perfil(request):
                 data['mensaje'] = 'Modificado correctamente'
             else:
                 data['mensaje'] = 'No se ha podido modificar'
-    return render(request,'perfil.html',data)
 
+    return render(request,'perfil/perfil-index.html',data)
+
+# Se crea la vista del plan del cliente para que visualice el total gastado disponible
 @login_required(login_url='/login/')
 def perfil_cliente_plan(request):
     user = request.user.get_username()
-    data = {
-        'solicitud':listar_usuario(user),
-    }
+    data = {'solicitud':listar_usuario(user)}
     user = request.user.get_username()
 
     cliente = Cliente.objects.get(razonsocial = user)
@@ -550,16 +560,18 @@ def perfil_cliente_plan(request):
                 data['extra_asesoria'] = contrato_obj.asesoria_extra
                 data['extra_capacitacion'] = contrato_obj.capacitacion_extra
 
-                return render(request,'plan-cliente.html',data)
+                return render(request,'perfil/perfil-plan-cliente.html',data)
         except:
             data['activo'] = 0
 
-    return render(request,'plan-cliente.html',data)
+    return render(request,'perfil/perfil-plan-cliente.html',data)
 
+# Se crea la vista perfil profesional
 @login_required(login_url='/login/')
 def perfil_profesional(request):
-    return render(request,'perfil-profesional.html')
+    return render(request,'perfil/perfil-profesional/perfil-profesional.html')
 
+# Se crea la vista kpi profesional
 @login_required(login_url='/login/')
 def perfil_profesional_kpi(request):
     data = {}
@@ -577,8 +589,9 @@ def perfil_profesional_kpi(request):
     data['asesoria_profesional'] = asesoria_count_profesional
     data['porcentaje'] = float(f'{porcentaje_asesoria:.2f}')
 
-    return render(request,'perfil-profesional-kpi.html', data)
+    return render(request,'perfil/perfil-profesional/perfil-profesional-kpi.html', data)
 
+# Se crea la vista asesoria cliente que lista todas las actividades del cliente
 @login_required(login_url='/login/')
 def asesoriaCliente(request):
     user = request.user.get_username()
@@ -588,8 +601,9 @@ def asesoriaCliente(request):
         'count':count_asesoria_cliente(user)
     }
     print(data['asesoria'])
-    return render(request,'asesoria_cliente.html',data)
+    return render(request,'perfil/perfil-cliente-asesoria.html',data)
 
+# Se crea la vista contrato cliente que lista todos los contratos del cliente
 @login_required(login_url='/login/')
 def contratoCliente(request):
     user = request.user.get_username()
@@ -598,8 +612,9 @@ def contratoCliente(request):
         'contrato':listar_contrato_cliente(user),
         'count':count_contrato_cliente(user)
     }
-    return render(request,'contrato_cliente.html',data)
+    return render(request,'perfil/perfil-cliente-contrato.html',data)
 
+# Se crea la funcion crear un check list para el usuario
 @permission_required('SecurityWeb.add_check',login_url='/login/')
 @login_required(login_url='/login/')
 def checklist(request):
@@ -626,8 +641,9 @@ def checklist(request):
         else:
             data['mensaje'] = 'Error al Check List'
         
-    return render(request,'check-list.html',data)
+    return render(request,'checkList/check-list.html',data)
 
+# Se crea la vista listado actividad
 permission_required('SecurityWeb.add_check',login_url='/login/')
 @login_required(login_url='/login/')
 def listado_actividad_profesional(request):
@@ -647,6 +663,7 @@ def listado_actividad_profesional(request):
         return render(request,'actividad-index.html',data)
     return render(request,'actividad-index.html',data)
 
+# Se crea la funcion asignar un profesional a la actividad
 @permission_required('SecurityWeb.mod_check',login_url='/login/')
 @login_required(login_url='/login/')
 def asignarProfesional(request,idactividad = None):
@@ -670,6 +687,7 @@ def asignarProfesional(request,idactividad = None):
     except:
         return render(request,'Error/error.html',{'error':'Error 405 Data not Found.', 'id': 'El ID Actividad No existe : '+str(idactividad)})
 
+# Se crea la vista index checklist
 @permission_required('SecurityWeb.add_check',login_url='/login/')
 @login_required(login_url='/login/')
 def check_list_index(request):
@@ -682,13 +700,14 @@ def check_list_index(request):
             id = request.POST.get("id")
             checklist = CheckList.objects.filter(idcheck=id).order_by('idcheck')
             data['checklist'] = checklist
-            return render(request,'check-list-index.html',data)
+            return render(request,'checkList/check-list-index.html',data)
     except:
         checklist = CheckList.objects.all().order_by('idcheck')
         data['checklist'] = checklist
-        return render(request,'check-list-index.html',data)
-    return render(request,'check-list-index.html',data)
+        return render(request,'checkList/check-list-index.html',data)
+    return render(request,'checkList/check-list-index.html',data)
 
+# Se crea la vista modificar check list
 @permission_required('SecurityWeb.mod_check',login_url='/login/')
 @login_required(login_url='/login/')
 def check_list_modificar(request,idcheck = None):
@@ -732,10 +751,11 @@ def check_list_modificar(request,idcheck = None):
             except:
                 data['mensaje'] = 'Error al Modificar Check List'
 
-        return render(request,'check-list-modificar.html',data)
+        return render(request,'checkList/check-list-modificar.html',data)
     except:
         return render(request,'Error/error.html',{'error':'Error 405 Data not Found.', 'id': 'El ID Check List No existe : '+str(idcheck)})
 
+# Se crea la vista que lista todas las salas
 @login_required(login_url='/login/')
 def listaChat(request):
     room = Room.objects.all().order_by('sala')
@@ -744,10 +764,12 @@ def listaChat(request):
     }
     return render(request, 'chat/chat-index.html',data)
 
+# Se crea la vista home del chat
 @login_required(login_url='/login/')
 def home(request):
     return render(request, 'chat/home.html')
 
+# Se crea la vista listado actividad
 @login_required(login_url='/login/')
 def room(request, room):
     username = request.GET.get('username')
@@ -825,21 +847,21 @@ def kpi_profesional(request):
 #Opens up page as PDF
 class ViewPDF_Check_List(View):
 	def get(self, request, *args, **kwargs):
-		pdf = render_to_pdf('check-list-pdf.html')
+		pdf = render_to_pdf('checkList/check-list-pdf.html')
 		return HttpResponse(pdf, content_type='application/pdf')
 
 #Opens up page as PDF
 class ViewPDF_KPI_Profesional(View):
     def get(self, request, *args, **kwargs):
         data = kpi_profesional(request)
-        pdf = render_to_pdf('Kpi-Asesoria-Profesional-pdf.html', data)
+        pdf = render_to_pdf('perfil/perfil-profesional/Kpi-Asesoria-Profesional-pdf.html', data)
         return HttpResponse(pdf, content_type='application/pdf')
 
 #Automaticly downloads to PDF file
 class DownloadPDF(View):
 	def get(self, request, *args, **kwargs):
 		
-		pdf = render_to_pdf('check-list-pdf.html')
+		pdf = render_to_pdf('checkList/check-list-pdf.html')
 
 		response = HttpResponse(pdf, content_type='application/pdf')
 		filename = "Invoice_%s.pdf" %("12341231")

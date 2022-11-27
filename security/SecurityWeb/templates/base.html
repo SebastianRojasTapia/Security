@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 {% load static %}
+
 <head>
   <meta charset="utf-8">
   <title>Security</title>
@@ -16,24 +17,25 @@
   <!-- Vendor Styles-->
   {% block estilos %}
   {% endblock estilos %}
-  <link rel="stylesheet" media="screen" href="{% static 'dist/vendor/tiny-slider/dist/tiny-slider.css'%}"/>
-  
+  <link rel="stylesheet" media="screen" href="{% static 'dist/vendor/tiny-slider/dist/tiny-slider.css'%}" />
+
   <!-- Main Theme Styles + Bootstrap-->
-  
+
   <link rel="stylesheet" media="screen" href="{% static 'dist/css/sweetalert2.min.css'%}">
   <link rel="stylesheet" media="screen" href="{% static 'dist/css/theme.min.css'%}">
   <link rel="stylesheet" href="{% static 'dist/css/simplebar.min.css'%}">
   <link rel="stylesheet" href="{% static 'dist/css/nouislider.min.css'%}">
-  <link rel="stylesheet" href="{% static 'dist/css/tarjeta.css'%}"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-  
+  <link rel="stylesheet" href="{% static 'dist/css/tarjeta.css'%}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
   <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
 
-   <!-- Page loading styles-->
-   <style>
-    .pagination{
-    margin-bottom: 0px;
-  }
+  <!-- Page loading styles-->
+  <style>
+    .pagination {
+      margin-bottom: 0px;
+    }
+
     .cs-page-loading {
       position: fixed;
       top: 0;
@@ -49,10 +51,12 @@
       visibility: hidden;
       z-index: 9999;
     }
+
     .cs-page-loading.active {
       opacity: 1;
       visibility: visible;
     }
+
     .cs-page-loading-inner {
       position: absolute;
       top: 50%;
@@ -65,43 +69,50 @@
       transition: opacity .2s ease-in-out;
       opacity: 0;
     }
-    .cs-page-loading.active > .cs-page-loading-inner {
+
+    .cs-page-loading.active>.cs-page-loading-inner {
       opacity: 1;
     }
-    .cs-page-loading-inner > span {
+
+    .cs-page-loading-inner>span {
       display: block;
       font-size: 1rem;
       font-weight: normal;
       color: #787a80;
     }
+
     .cs-page-spinner {
       display: inline-block;
       width: 2.75rem;
       height: 2.75rem;
       margin-bottom: .75rem;
       vertical-align: text-bottom;
-      background-color: #cfcfd1; 
+      background-color: #cfcfd1;
       border-radius: 50%;
       opacity: 0;
       -webkit-animation: spinner .75s linear infinite;
       animation: spinner .75s linear infinite;
     }
+
     @-webkit-keyframes spinner {
       0% {
         -webkit-transform: scale(0);
         transform: scale(0);
       }
+
       50% {
         opacity: 1;
         -webkit-transform: none;
         transform: none;
       }
     }
+
     @keyframes spinner {
       0% {
         -webkit-transform: scale(0);
         transform: scale(0);
       }
+
       50% {
         opacity: 1;
         -webkit-transform: none;
@@ -132,6 +143,7 @@
       right: 1rem;
       z-index: 100;
     }
+
     .cs-demo-switcher-inner {
       width: 3rem;
       height: 3rem;
@@ -143,13 +155,13 @@
       line-height: 3rem;
       text-align: center;
       text-decoration: none;
-      box-shadow: 0px 10px 15px 0px rgba(30,33,44,0.10);
+      box-shadow: 0px 10px 15px 0px rgba(30, 33, 44, 0.10);
     }
   </style>
 
-<!-- Style de Producto-->
-<style>
-  .cs-range-slider-ui .noUi-handle {
+  <!-- Style de Producto-->
+  <style>
+    .cs-range-slider-ui .noUi-handle {
       top: 50% !important;
       width: .875rem !important;
       height: .875rem !important;
@@ -158,260 +170,271 @@
       border-radius: 50% !important;
       box-shadow: none !important;
       background-color: #17696a !important;
-  }
-  .cs-range-slider-ui {
+    }
+
+    .cs-range-slider-ui {
       height: .125rem !important;
       margin: 3rem 0 !important;
       border: 0 !important;
       background-color: #dadbdd !important;
       box-shadow: none !important;
-  }
+    }
 
-  .breadcrumb-alt .breadcrumb-item + .breadcrumb-item::before{
+    .breadcrumb-alt .breadcrumb-item+.breadcrumb-item::before {
       content: none;
-  }
+    }
 
-  .dropdown-toggle::after{
-    content: none;
-  }
-
-</style>
+    .dropdown-toggle::after {
+      content: none;
+    }
+  </style>
 
 </head>
+
 <body>
 
-    <!-- Page loading spinner-->
-    <div class="cs-page-loading active">
-      <div class="cs-page-loading-inner">
-        <div class="cs-page-spinner"></div><span>Cargando...</span>
+  <!-- Page loading spinner-->
+  <div class="cs-page-loading active">
+    <div class="cs-page-loading-inner">
+      <div class="cs-page-spinner"></div><span>Cargando...</span>
+    </div>
+  </div>
+
+  <header class="cs-header">
+    <!-- Navbar -->
+    <!-- Remove "navbar-sticky" class to make navigation bar scrollable with the page -->
+    <div class="navbar navbar-expand-lg navbar-light bg-light navbar-sticky" data-fixed-element>
+      <div class="container px-0 px-xl-3">
+        <a href="{% url 'index' %}" class="navbar-brand order-lg-1 mr-0 pr-lg-3 mr-lg-4">
+          <h3 class="mt-4">Security</h3>
+        </a>
+        <!-- Toolbar -->
+        <div class="d-flex align-items-center order-lg-3">
+          <ul class="nav nav-tools flex-nowrap">
+            {% if perms.admin.delete_session %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown" class="nav-link">Bienvenido
+                @{{user.username}}</a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i
+                      class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
+              </ul>
+            </li>
+            {% else %}
+            {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown" class="nav-link">Bienvenido
+                @{{user.username}}</a>
+              <ul class="dropdown-menu">
+                {% if perms.SecurityWeb.add_check %}
+                <li><a href="{% url 'perfilProfesional'%}" class="dropdown-item"><i
+                      class="fa-regular fa-user font-size-sm mr-2"></i>Perfil Profesional</a></i></li>
+                <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i
+                      class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
+                {% else %}
+                <li><a href="{% url 'perfil'%}" class="dropdown-item"><i
+                      class="fa-regular fa-user font-size-sm mr-2"></i>Perfil</a></i></li>
+                <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i
+                      class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
+                {% endif %}
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item align-self-center mb-0">
+              <a href="{% url 'LOG' %}" class="nav-tool pr-lg-0">
+                <span class="btn btn-primary font-size-ms">Ingresar</span>
+              </a>
+            </li>
+            {% endif %}
+            {% endif %}
+
+            <li class="divider-vertical mb-0 d-lg-none d-block"></li>
+            <li class="nav-item mb-0">
+              <button class="navbar-toggler mt-n1 mr-n3" type="button" data-toggle="collapse"
+                data-target="#navbarCollapse" aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <style>
+          .navbar-expand-lg .navbar-nav>.dropdown>.dropdown-toggle::after {
+            content: "" !important;
+          }
+        </style>
+        <!-- Navbar collapse -->
+        <nav class="collapse navbar-collapse order-lg-2" id="navbarCollapse">
+          <!-- Menu -->
+          <ul class="navbar-nav mr-auto">
+            {% if perms.admin.delete_session%}
+            <li class="nav-item">
+              <a href="{% url 'LOGPROFE' %}" class="nav-link">Registrar Profesional</a>
+            </li>
+            {% else %}
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a href="{% url 'index' %}" class="nav-link">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'misionVision' %}" class="nav-link">Mision y Visión</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'plan' %}" class="nav-link">Plan</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'contacto' %}" class="nav-link">Contáctanos</a>
+            </li>
+            {% if perms.SecurityWeb.add_check %}
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Mantenedores</a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'check' %}" class="dropdown-item">Ingresar Check List</a></li>
+                <li><a href="{% url 'check_list_index' %}" class="dropdown-item">Listar Check List</a></li>
+                <li><a href="{% url 'listadoActividad' %}" class="dropdown-item">Lista Actividades</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Comunicación</a>
+              <ul class="dropdown-menu">
+                <a href="{% url 'home' %}" class="dropdown-item">Sala Comunicaciones</a>
+                <li><a href="{% url 'listaChat' %}" class="dropdown-item">Listado Sala de Comunicación</a></li>
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Solicitudes</a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Asesoria</a></li>
+                <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Reporte</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'home' %}" class="nav-link">Sala Comunicaciones</a>
+            </li>
+            {% endif %}
+
+            {% else %}
+            <li class="nav-item">
+              <a href="{% url 'index' %}" class="nav-link">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'misionVision' %}" class="nav-link">Mision y Visión</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'plan' %}" class="nav-link">Plan</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'contacto' %}" class="nav-link">Contáctanos</a>
+            </li>
+            {% endif %}
+            {% endif %}
+
+          </ul>
+        </nav>
       </div>
     </div>
+  </header>
 
-    <header class="cs-header">
-      <!-- Navbar -->
-      <!-- Remove "navbar-sticky" class to make navigation bar scrollable with the page -->
-      <div class="navbar navbar-expand-lg navbar-light bg-light navbar-sticky" data-fixed-element>
-        <div class="container px-0 px-xl-3">
-          <a href="{% url 'index' %}" class="navbar-brand order-lg-1 mr-0 pr-lg-3 mr-lg-4">
-            <h3 class="mt-4">Security</h3>
+  {% block contenido %}
+
+  {% endblock contenido %}
+
+  <footer class="cs-footer pt-sm-5 pt-4 bg-dark">
+    <div class="container pt-3">
+      <div class="row pb-sm-2">
+        <div class="col-6 col-sm-3 col-lg-2 mb-4">
+          <h3 class="h6 mb-2 pb-1 text-uppercase text-light">Help</h3>
+          <ul class="nav nav-light flex-column">
+            <li class="nav-item mb-2">
+              <a href="#" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Delivery &amp; returns</a>
+            </li>
+            <li class="nav-item mb-2">
+              <a href="contacts.html" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">FAQ</a>
+            </li>
+            <li class="nav-item mb-2">
+              <a href="order-tracking.html" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Track order</a>
+            </li>
+            <li class="nav-item mb-2">
+              <a href="blog.html" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Blog</a>
+            </li>
+            <li class="nav-item mb-2">
+              <a href="contacts.html" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Contacts</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-6 col-sm-3 col-lg-2 col-xl-3 mb-4">
+          <h3 class="h6 mb-2 pb-1 text-uppercase text-light pl-xl-6">Shop</h3>
+          <ul class="nav nav-light flex-column pl-xl-6">
+            <li class="nav-item mb-2">
+              <a href="#" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">New arrivals</a>
+            </li>
+            <li class="nav-item mb-2">
+              <a href="#" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Trending now</a>
+            </li>
+            <li class="nav-item mb-2">
+              <a href="#" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Sales</a>
+            </li>
+            <li class="nav-item mb-2">
+              <a href="#" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Brands</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-sm-6 col-lg-3 pb-2 pb-lg-0 mb-4">
+          <h3 class="h6 mb-2 pb-1 text-uppercase text-light">Ponte en Contacto</h3>
+          <ul class="nav nav-light flex-column pb-3">
+            <li class="nav-item text-nowrap mb-2">
+              <span class="text-light mr-1">LLamar:</span>
+              <a href="tel:4055550128" class="nav-link d-inline-block mr-lg-0 mr-sm-4 p-0 font-weight-normal">(405)
+                555-0128</a>
+            </li>
+            <li class="nav-item text-nowrap mb-2">
+              <span class="text-light mr-1">Correo:</span>
+              <a href="mailto:support@example.coms"
+                class="nav-link d-inline-block mr-lg-0 mr-sm-4 p-0 font-weight-normal">support@example.com</a>
+            </li>
+          </ul>
+          <a href="#" class="social-btn sb-solid sb-light mr-2">
+            <i class="fa-brands fa-facebook"></i>
           </a>
-          <!-- Toolbar -->
-          <div class="d-flex align-items-center order-lg-3">
-            <ul class="nav nav-tools flex-nowrap">
-              {% if perms.admin.delete_session %}
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" data-toggle="dropdown" class="nav-link">Bienvenido @{{user.username}}</a>
-                  <ul class="dropdown-menu">
-                      <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
-                  </ul>
-                </li>       
-              {% else %}
-                {% if user.is_authenticated %}
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" class="nav-link">Bienvenido @{{user.username}}</a>
-                    <ul class="dropdown-menu">
-                      {% if perms.SecurityWeb.add_check %}
-                        <li><a href="{% url 'perfilProfesional'%}" class="dropdown-item"><i class="fa-regular fa-user font-size-sm mr-2"></i>Perfil Profesional</a></i></li>
-                        <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
-                      {% else %}
-                        <li><a href="{% url 'perfil'%}" class="dropdown-item"><i class="fa-regular fa-user font-size-sm mr-2"></i>Perfil</a></i></li>
-                        <li><a href="{% url 'LOGOUT'%}" class="dropdown-item"><i class="fas fa-sign-out-alt font-size-sm mr-2"></i>Cerrar Sesión</a></li>
-                      {% endif %}
-                    </ul>
-                  </li>       
-                {% else %}
-                  <li class="nav-item align-self-center mb-0">
-                    <a href="{% url 'LOG' %}" class="nav-tool pr-lg-0">
-                      <span class="btn btn-primary font-size-ms">Ingresar</span>
-                    </a>
-                  </li>
-                {% endif %}
-              {% endif %}
-              
-              <li class="divider-vertical mb-0 d-lg-none d-block"></li>
-              <li class="nav-item mb-0">
-                <button class="navbar-toggler mt-n1 mr-n3" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-expanded="false">
-                  <span class="navbar-toggler-icon"></span>
-                </button>
-              </li>
-            </ul>
+          <a href="#" class="social-btn sb-solid sb-light mr-2">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a href="#" class="social-btn sb-solid sb-light mr-2">
+            <i class="fa-brands fa-twitter"></i>
+          </a>
+          <a href="#" class="social-btn sb-solid sb-light mr-2">
+            <i class="fa-brands fa-youtube"></i>
+          </a>
+          <a href="#" class="social-btn sb-solid sb-light">
+            <i class="fa-brands fa-pinterest"></i>
+          </a>
+        </div>
+        <div class="col-lg-4 col-xl-3 mb-4">
+          <h3 class="h6 mb-3 pb-1 text-uppercase text-light">Proximamente APP</h3>
+          <div class="d-flex flex-wrap flex-sm-nowrap">
+            <a href="#" class="btn-market btn-apple mb-3 mr-3" role="button">
+              <span class="btn-market-subtitle">Descargar en</span>
+              <span class="btn-market-title">App Store</span>
+            </a>
+            <a href="#" class="btn-market btn-google mb-3" role="button">
+              <span class="btn-market-subtitle">Descargar en</span>
+              <span class="btn-market-title">Google Play</span>
+            </a>
           </div>
-
-          <style>
-            .navbar-expand-lg .navbar-nav>.dropdown>.dropdown-toggle::after{
-                content: "" !important;
-            }
-          </style>
-          <!-- Navbar collapse -->
-          <nav class="collapse navbar-collapse order-lg-2" id="navbarCollapse">
-            <!-- Menu -->
-            <ul class="navbar-nav mr-auto">
-              {% if perms.admin.delete_session%}
-              <li class="nav-item">
-                <a href="{% url 'LOGPROFE' %}" class="nav-link">Registrar Profesional</a>
-              </li>
-              {% else %}
-                {% if user.is_authenticated %}
-                  <li class="nav-item">
-                    <a href="{% url 'index' %}" class="nav-link">Inicio</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{% url 'misionVision' %}"class="nav-link">Mision y Visión</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{% url 'plan' %}" class="nav-link">Plan</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{% url 'contacto' %}" class="nav-link">Contáctanos</a>
-                  </li>
-                  {% if perms.SecurityWeb.add_check %}
-                    <li class="nav-item dropdown">
-                      <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Mantenedores</a>
-                      <ul class="dropdown-menu">
-                        <li><a href="{% url 'check' %}" class="dropdown-item">Ingresar Check List</a></li>
-                        <li><a href="{% url 'check_list_index' %}" class="dropdown-item">Listar Check List</a></li>
-                        <li><a href="{% url 'listadoActividad' %}" class="dropdown-item">Lista Actividades</a></li>
-                      </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                      <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Comunicación</a>
-                      <ul class="dropdown-menu">
-                        <a href="{% url 'home' %}" class="dropdown-item">Sala Comunicaciones</a>
-                        <li><a href="{% url 'listaChat' %}" class="dropdown-item">Listado Sala de Comunicación</a></li>
-                      </ul>
-                    </li>
-                  {% else %}
-                    <li class="nav-item dropdown">
-                      <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Solicitudes</a>
-                      <ul class="dropdown-menu">
-                        <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Asesoria</a></li>
-                        <li><a href="{% url 'asesoria' %}" class="dropdown-item">Solicitar Reporte</a></li>
-                      </ul>
-                    </li>
-                    <li class="nav-item">
-                      <a href="{% url 'home' %}" class="nav-link">Sala Comunicaciones</a>
-                    </li>
-                  {% endif %}
-                
-                {% else %}
-                  <li class="nav-item">
-                    <a href="{% url 'index' %}" class="nav-link">Inicio</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{% url 'misionVision' %}"class="nav-link">Mision y Visión</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{% url 'plan' %}" class="nav-link">Plan</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{% url 'contacto' %}" class="nav-link">Contáctanos</a>
-                  </li>
-                {% endif %}
-              {% endif %}
-              
-            </ul>
-          </nav>
         </div>
       </div>
-    </header>
-
-    {% block contenido %}
-
-    {% endblock contenido %}
-
-    <footer class="cs-footer pt-sm-5 pt-4 bg-dark">
-        <div class="container pt-3">
-        <div class="row pb-sm-2">
-            <div class="col-6 col-sm-3 col-lg-2 mb-4">
-            <h3 class="h6 mb-2 pb-1 text-uppercase text-light">Help</h3>
-            <ul class="nav nav-light flex-column">
-                <li class="nav-item mb-2">
-                <a href="#" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Delivery &amp; returns</a>
-                </li>
-                <li class="nav-item mb-2">
-                <a href="contacts.html" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">FAQ</a>
-                </li>
-                <li class="nav-item mb-2">
-                <a href="order-tracking.html" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Track order</a>
-                </li>
-                <li class="nav-item mb-2">
-                <a href="blog.html" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Blog</a>
-                </li>
-                <li class="nav-item mb-2">
-                <a href="contacts.html" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Contacts</a>
-                </li>
-            </ul>
-            </div>
-            <div class="col-6 col-sm-3 col-lg-2 col-xl-3 mb-4">
-            <h3 class="h6 mb-2 pb-1 text-uppercase text-light pl-xl-6">Shop</h3>
-            <ul class="nav nav-light flex-column pl-xl-6">
-                <li class="nav-item mb-2">
-                <a href="#" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">New arrivals</a>
-                </li>
-                <li class="nav-item mb-2">
-                <a href="#" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Trending now</a>
-                </li>
-                <li class="nav-item mb-2">
-                <a href="#" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Sales</a>
-                </li>
-                <li class="nav-item mb-2">
-                <a href="#" class="nav-link mr-lg-0 mr-sm-4 p-0 font-weight-normal">Brands</a>
-                </li>
-            </ul>
-            </div>
-            <div class="col-sm-6 col-lg-3 pb-2 pb-lg-0 mb-4">
-            <h3 class="h6 mb-2 pb-1 text-uppercase text-light">Ponte en Contacto</h3>
-            <ul class="nav nav-light flex-column pb-3">
-                <li class="nav-item text-nowrap mb-2">
-                <span class="text-light mr-1">LLamar:</span>
-                <a href="tel:4055550128" class="nav-link d-inline-block mr-lg-0 mr-sm-4 p-0 font-weight-normal">(405) 555-0128</a>
-                </li>
-                <li class="nav-item text-nowrap mb-2">
-                <span class="text-light mr-1">Correo:</span>
-                <a href="mailto:support@example.coms" class="nav-link d-inline-block mr-lg-0 mr-sm-4 p-0 font-weight-normal">support@example.com</a>
-                </li>
-            </ul>
-            <a href="#" class="social-btn sb-solid sb-light mr-2">
-                <i class="fa-brands fa-facebook"></i>
-            </a>
-            <a href="#" class="social-btn sb-solid sb-light mr-2">
-                <i class="fa-brands fa-instagram"></i>
-            </a>
-            <a href="#" class="social-btn sb-solid sb-light mr-2">
-                <i class="fa-brands fa-twitter"></i>
-            </a>
-            <a href="#" class="social-btn sb-solid sb-light mr-2">
-                <i class="fa-brands fa-youtube"></i>
-            </a>
-            <a href="#" class="social-btn sb-solid sb-light">
-                <i class="fa-brands fa-pinterest"></i>
-            </a>
-            </div>
-            <div class="col-lg-4 col-xl-3 mb-4">
-            <h3 class="h6 mb-3 pb-1 text-uppercase text-light">Proximamente APP</h3>
-            <div class="d-flex flex-wrap flex-sm-nowrap">
-                <a href="#" class="btn-market btn-apple mb-3 mr-3" role="button">
-                <span class="btn-market-subtitle">Descargar en</span>
-                <span class="btn-market-title">App Store</span>
-                </a>
-                <a href="#" class="btn-market btn-google mb-3" role="button">
-                <span class="btn-market-subtitle">Descargar en</span>
-                <span class="btn-market-title">Google Play</span>
-                </a>
-            </div>
-            </div>
+    </div>
+    <div class="border-top border-light">
+      <div class="container py-4">
+        <div class="font-size-xs text-light">
+          <span class="font-size-sm">&copy; </span>
+          Reservados todos los derechos.
+          <i class="fab fa-aws font-size-base text-primary align-middle mr-1 ml-1"></i>
+          <a href="https://createx.studio/" class="text-light" target="_blank" rel="noopener noreferrer">by Los Main</a>
         </div>
-        </div>
-        <div class="border-top border-light">
-            <div class="container py-4">
-                <div class="font-size-xs text-light">
-                <span class="font-size-sm">&copy; </span>
-                Reservados todos los derechos.
-                <i class="fab fa-aws font-size-base text-primary align-middle mr-1 ml-1"></i>
-                <a href="https://createx.studio/" class="text-light" target="_blank" rel="noopener noreferrer">by Los Main</a>
-                </div>
-            </div>
-        </div>
+      </div>
+    </div>
   </footer>
 
 
@@ -430,7 +453,7 @@
   <script src="{% static 'dist/vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js'%}"></script>
   <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
-  
+
   <script src="{% static 'dist/js/validaciones/registroCliente.js'%}"></script>
   <script src="{% static 'dist/js/validaciones/registroProfesional.js'%}"></script>
   <script src="{% static 'dist/js/validaciones/modificarPerfil.js'%}"></script>
@@ -446,19 +469,14 @@
 
   <!-- Main theme script-->
   <script src="{% static 'dist/js/theme.min.js'%}"></script>
-  
+
   <!-- Tarjeta Credito -->
   {% block js %}
 
   {% endblock js %}
-  
+
 
 </body>
 
 
 </html>
-
-
-
-
-

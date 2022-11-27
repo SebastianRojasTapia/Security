@@ -1,0 +1,146 @@
+{% extends "base.html" %}}
+
+{% load static %}
+{% block contenido %}
+<style>
+  span {
+    color: white;
+  }
+</style>
+
+<main class="cs-page-wrapper">
+
+  <!-- Breadcrumb -->
+  <nav class="bg-secondary mb-3" aria-label="breadcrumb">
+    <div class="container">
+      <ol class="breadcrumb breadcrumb-alt mb-0">
+        <li class="breadcrumb-item">
+          <a href="{% url 'index' %}"><i class="fa-solid fa-house"></i></a>
+        </li>
+        <li class="breadcrumb-item" aria-current="page">Inicio</li>
+        <li class="breadcrumb-item">
+          <i class="fa-solid fa-angle-right"></i>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Check List Listado</li>
+      </ol>
+
+    </div>
+  </nav>
+
+  <!-- Page container -->
+  <section class="container pt-3 pt-lg-4 pb-5 pb-lg-6">
+    <div class="row pb-2 pb-lg-0">
+
+      <!-- Content -->
+      <div class="col-lg-12 ml-auto">
+        <div class="d-flex align-items-center justify-content-between mb-4 pb-1 pb-sm-3">
+          <h1 class="h2 mb-0">Check List Listado</h1>
+        </div>
+
+
+      </div>
+      <form action="{% url 'check_list_index' %}" method="POST">
+        {% csrf_token %}
+        <div class="col-lg-12 ml-auto mb-3">
+          <label for="ac-fn"><i class="fa-solid fa-magnifying-glass"></i></i> Buscar ID</label>
+          <div class="input-group">
+            <input type="text" class="form-control form-control-lg" name="id" id="id"
+              placeholder="Ingrese el ID"></input>
+            <button type="submit" class="btn btn-primary">&nbsp;Buscar&nbsp;</button>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="col-lg-12 ml-auto">
+        <!-- Basic table -->
+        <div class="table-responsive-sm">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th class="align-top">ID</th>
+                <th class="align-top">Comentario</th>
+                <th class="align-top">Señaletica</th>
+                <th class="align-top">Seguridad</th>
+                <th class="align-top">Material Peligroso</th>
+                <th class="align-top">Red Hidrica</th>
+                <th class="align-top">Iluminaria</th>
+                <th class="align-top">Seguro ++</th>
+                <th class="align-top">Plan Seguridad</th>
+                <th class="align-top">Fecha Registro</th>
+                <th class="align-top">Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in checklist %}
+              <tr>
+
+                <td>{{item.idcheck}}</td>
+                <td>{{item.descripcion}}</td>
+
+                {% if item.isseniales == "Si" %}
+                <td><span class="badge bg-success">{{item.isseniales}}</span></td>
+                {% else %}
+                <td><span class="badge bg-danger">{{item.isseniales}}</span></td>
+                {% endif %}
+
+                {% if item.iselementoseguridad == "Si" %}
+                <td><span class="badge bg-success">{{item.iselementoseguridad}}</span></td>
+                {% else %}
+                <td><span class="badge bg-danger">{{item.iselementoseguridad}}</span></td>
+                {% endif %}
+
+                {% if item.ismaterial == "Si" %}
+                <td><span class="badge bg-success">{{item.ismaterial}}</span></td>
+                {% else %}
+                <td><span class="badge bg-danger">{{item.ismaterial}}</span></td>
+                {% endif %}
+
+                {% if item.isredagua == "Si" %}
+                <td><span class="badge bg-success">{{item.isredagua}}</span></td>
+                {% else %}
+                <td><span class="badge bg-danger">{{item.isredagua}}</span></td>
+                {% endif %}
+
+                {% if item.isluminaria == "Si" %}
+                <td><span class="badge bg-success">{{item.isluminaria}}</span></td>
+                {% else %}
+                <td><span class="badge bg-danger">{{item.isluminaria}}</span></td>
+                {% endif %}
+
+                {% if item.isseguro == "Si" %}
+                <td><span class="badge bg-success">{{item.isseguro}}</span></td>
+                {% else %}
+                <td><span class="badge bg-danger">{{item.isseguro}}</span></td>
+                {% endif %}
+
+                {% if item.istrabajoseguro == "Si" %}
+                <td><span class="badge bg-success">{{item.istrabajoseguro}}</span></td>
+                {% else %}
+                <td><span class="badge bg-danger">{{item.istrabajoseguro}}</span></td>
+                {% endif %}
+                <td>{{item.fecharegistro}}</td>
+
+                <td>
+                  <div class="row">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                      <a href="{% url 'check_modificar' item.idcheck %}" type="button"
+                        class="btn btn-info btn-sm mb-2">Modificar</a>
+                    </div>
+                  </div>
+                </td>
+
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+  </section>
+
+  <div style="text-align: center; color: blue; font-size: 25px; ">
+    <h3>{{mensaje}}</h3>
+  </div>
+</main>
+{% endblock contenido %}
