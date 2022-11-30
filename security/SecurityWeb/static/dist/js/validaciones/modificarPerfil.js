@@ -39,10 +39,10 @@ function validarModificacionPerfil() {
         return false;
     }
 
-    // resp = validarNumeroContacto();
-    // if (resp == false){
-    //     return false;
-    // }
+    resp = validarNumeroContacto();
+    if (resp == false){
+        return false;
+    }
 }
 
 function success(menssaje){

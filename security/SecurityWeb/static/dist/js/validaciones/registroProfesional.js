@@ -26,11 +26,11 @@ function validarRut(){
     }
     var dv_usuario = rut.slice(-1).toUpperCase();
     if (dv != dv_usuario) {
-        error("Vuelve a intetarlo.")
+        error("Rut Invalido.")
         return false;
     } 
     else {
-        success("Rut Valido")
+        success("Rut Valido.")
         return true;
     }
 }

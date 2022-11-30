@@ -62,7 +62,7 @@
                 <div class="px-md-5">
                     <h3 class="modal-title mt-4 mb-0 text-center">Registro</h3>
                     <p class="font-size-sm text-muted text-center">Registrate en nuestro sitio web para contratar nuestros planes disponibles.</p>
-                    <form action="{% url 'LOG'%}" method="POST" onsubmit="return validarCuenta()" novalidate>
+                    <form action="{% url 'LOG'%}" method="POST" onsubmit="return validarCuenta()">
                         {% csrf_token %}
                         <div class="form-group">
                             <div class="row">
@@ -118,4 +118,5 @@
     </section>
 </main>
 
+<script src="{% static 'dist/js/validaciones/registroCliente.js'%}"></script>
 {% endblock contenido %}

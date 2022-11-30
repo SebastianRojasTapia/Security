@@ -103,8 +103,7 @@ def loginProfesional(request):
         correo = request.POST.get('correo')
         contrasena = request.POST.get('pass')
         name = primerNombre[:4]+primerApelido[:3]
-        print(name)
-
+     
         try:
             u = User.objects.get(username=name)
             data['mensaje'] = 'Usuario ya ingresado'
@@ -223,7 +222,6 @@ def contratar(request):
         else:
             contrato_obj = Contrato.objects.order_by("fechacontrato").filter(rutcliente_id = cliente.rutcliente)
             contrato_obj = contrato_obj[0]
-            print(contrato_obj)
             contrato_obj = contrato_obj.vigente
 
             if contrato_obj == "1":
@@ -300,7 +298,7 @@ def ViewPagoExtra(request,extra_asesoria,extra_capacitacion):
         'extra_capacitacion':extra_capacitacion,
         'asesoria_monto':asesoria.montoactividad,
         'capacitacion_monto':capacitacion.montoactividad,
-        'asesoria_valor':capacitacion.montoactividad*extra_asesoria,
+        'asesoria_valor':asesoria.montoactividad*extra_asesoria,
         'capacitacion_valor':capacitacion.montoactividad*extra_capacitacion,
         'total': (asesoria.montoactividad*extra_asesoria)+capacitacion.montoactividad*extra_capacitacion
     }
@@ -601,7 +599,6 @@ def asesoriaCliente(request):
         'asesoria':listar_asesoria_cliente(user),
         'count':count_asesoria_cliente(user)
     }
-    print(data['asesoria'])
     return render(request,'perfil/perfil-cliente-asesoria.html',data)
 
 # Se crea la vista contrato cliente que lista todos los contratos del cliente

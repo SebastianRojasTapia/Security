@@ -98,16 +98,15 @@ function validarFechaInicio() {
                 else{
                     var fecha = new Date()
                     fecha.setDate(fecha_inicio.getDate() + 1)
-                    errorFecha("Solo se puede Extender la Capacitacion 3 Dias. Menor o igual a esta fecha. " + fecha.toLocaleDateString() + " Incluye los fines de semana.")
+                    errorFecha("Solo se puede Extender la visita terreno 3 Dias. Menor o igual a esta fecha. " + fecha.toLocaleDateString() + " Incluye los fines de semana.")
                     return false;
                 }
             }
             else{
-                ahora.setDate(ahora.getDate() + 15)
-                errorFecha("Para agendar la capacitacion debe tener 15 Dias de anticipacion a la fecha Actual. Desde el día " + ahora.toLocaleDateString() + " puede agendar.")
+                ahora.setDate(ahora.getDate() + 5)
+                errorFecha("Para agendar la visita terreno debe tener 5 Dias de anticipacion a la fecha Actual. Desde el día " + ahora.toLocaleDateString() + " puede agendar.")
                 return false;
             }
-
         }
         errorFecha("La Fecha Termino debe ser mayor a la Fecha Inicio.")
         return false;
@@ -136,7 +135,6 @@ function validarFechaInicio() {
                 errorFecha("Para agendar la capacitacion debe tener 15 Dias de anticipacion a la fecha Actual. Desde el día " + ahora.toLocaleDateString() + " puede agendar.")
                 return false;
             }
-
         }
         errorFecha("La Fecha Termino debe ser mayor a la Fecha Inicio.")
         return false;
@@ -165,7 +163,6 @@ function validarHora() {
             errorFecha("La Hora de Termino debe ser mayor a la Hora de Inicio.")
             return false;
         }
-        
     }
 
     if(d == "3"){ 
@@ -181,7 +178,6 @@ function validarHora() {
                 return true
             }
         }
-
         else{
             errorFecha("La Hora de Termino debe ser mayor a la Hora de Inicio.")
             return false;
@@ -190,21 +186,46 @@ function validarHora() {
 }
 
 function validarAsistentes() {
-    var a = document.getElementById("cant_asistentes").value;
-    if (a >= 5 && a <= 50) {
-        return true;
+    var d = document.getElementById("tip_asesoria").value;
+    if(d == "3"){
+        var a = document.getElementById("cant_asistentes").value;
+        if (a >= 5 && a <= 50) {
+            return true;
+        }
+        error("La cantidad de asistentes por capacitación son entre 5 a 50 personas.")
+        return false;
     }
-    error("La cantidad de asistentes por capacitación son entre 5 a 50 personas.")
-    return false;
+
 }
 
 function validarDireccion() {
     var a = document.getElementById("direccion").value;
-    if (a.trim().length >= 5 && a.trim().length <= 100) {
-        return true;
+
+    var d = document.getElementById("tip_asesoria").value;
+    if(d == "1"){
+        if (a.trim().length >= 5 && a.trim().length <= 100) {
+            return true;
+        }
+        error("Largo de la Direccion, debe estar entre 5 y 100 caracteres.")
+        return false;
     }
-    error("Largo de la Descripcion, debe estar entre 5 y 100 caracteres.")
-    return false;
+    
+    if(d == "3"){
+        if (a.trim().length >= 5 && a.trim().length <= 100) {
+            return true;
+        }
+        error("Largo de la Direccion, debe estar entre 5 y 100 caracteres.")
+        return false;
+    }
+
+    if(d == "4"){
+        if (a.trim().length >= 5 && a.trim().length <= 100) {
+            return true;
+        }
+        error("Largo de la Direccion, debe estar entre 5 y 100 caracteres.")
+        return false;
+    }
+    
 
 }
 
