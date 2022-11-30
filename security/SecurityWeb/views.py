@@ -83,7 +83,8 @@ def login(request):
             login_autent(request,us)
             return render(request,'index.html',{'user':us})
         else:
-            return render(request,'login/login.html',{'msg':'Usuario o contraseña incorrecta'})
+            data['msg']= 'Usuario o contraseña incorrecta'
+            return render(request,'login/login.html',data)
 
     return render(request,'login/login.html',data)
 
