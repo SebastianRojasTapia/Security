@@ -90,20 +90,25 @@ function validarFechaInicio() {
         var ahora = new Date()
         
         if(fecha_inicio <= fecha_termino){
-            if (ahora < fecha_inicio){
+            var ahora = new Date()
+            fecha_inicio.setDate(fecha_inicio.getDate() + 1)
+            ahora.setDate(ahora.getDate() + 5)
+            var addMlSeconds = 240 * 60000;
+            ahora = new Date(ahora-addMlSeconds)
 
-                if (fecha_inicio.setDate(fecha_inicio.getDate() + 3) >= fecha_termino){
+            if (ahora < fecha_inicio){
+                
+                var plazo = new Date()
+                plazo.setDate(fecha_inicio.getDate() + 3)
+                if (plazo >= fecha_termino){
                     return true
                 }
                 else{
-                    var fecha = new Date()
-                    fecha.setDate(fecha_inicio.getDate() + 1)
-                    errorFecha("Solo se puede Extender la visita terreno 3 Dias. Menor o igual a esta fecha. " + fecha.toLocaleDateString() + " Incluye los fines de semana.")
+                    errorFecha("Solo se puede Extender la visita terreno 3 Dias. Menor o igual a esta fecha. " + plazo.toLocaleDateString() + " Incluye los fines de semana.")
                     return false;
                 }
             }
             else{
-                ahora.setDate(ahora.getDate() + 5)
                 errorFecha("Para agendar la visita terreno debe tener 5 Dias de anticipacion a la fecha Actual. Desde el día " + ahora.toLocaleDateString() + " puede agendar.")
                 return false;
             }
@@ -122,7 +127,7 @@ function validarFechaInicio() {
             ahora.setDate(ahora.getDate() + 15)
             var addMlSeconds = 240 * 60000;
             ahora = new Date(ahora-addMlSeconds)
-            
+
             if (ahora < fecha_inicio){
                 var plazo = new Date()
                 plazo.setDate(fecha_inicio.getDate() + 3)

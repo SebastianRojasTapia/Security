@@ -31,7 +31,7 @@
             <div class="d-flex align-items-center justify-content-between mb-4 pb-1 pb-sm-3">
               <h1 class="h2 mb-0">Asesoria</h1>
             </div>
-            <form action="{% url 'asesoria'%}" method="POST" onsubmit="return validarAsesoria()">
+            <form action="{% url 'asesoria'%}" method="POST" onsubmit="return validarAsesoria()" novalidate>
             {% csrf_token %}
             <div class="row">
                 <div class="col-3"></div>
