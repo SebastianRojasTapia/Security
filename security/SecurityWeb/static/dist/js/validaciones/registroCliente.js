@@ -31,7 +31,6 @@ function validarRut() {
         return false;
     } 
     else {
-        success("Rut Valido")
         return true;
     }
 }

@@ -113,25 +113,28 @@ function validarFechaInicio() {
     }
 
     if(d == "3"){ 
-        var fecha_inicio =  new Date(document.getElementById("fecha_inicio").value);
+        var fecha_inicio = new Date(document.getElementById("fecha_inicio").value);
         var fecha_termino = new Date(document.getElementById("fecha_termino").value);
-        var ahora = new Date()
         
         if(fecha_inicio <= fecha_termino){
+            var ahora = new Date()
+            fecha_inicio.setDate(fecha_inicio.getDate() + 1)
+            ahora.setDate(ahora.getDate() + 15)
+            var addMlSeconds = 240 * 60000;
+            ahora = new Date(ahora-addMlSeconds)
+            
             if (ahora < fecha_inicio){
-
-                if (fecha_inicio.setDate(fecha_inicio.getDate() + 3) >= fecha_termino){
+                var plazo = new Date()
+                plazo.setDate(fecha_inicio.getDate() + 3)
+                if (plazo >= fecha_termino){
                     return true
                 }
                 else{
-                    var fecha = new Date()
-                    fecha.setDate(fecha_inicio.getDate() + 1)
-                    errorFecha("Solo se puede Extender la Capacitacion 3 Dias. Menor o igual a esta fecha. " + fecha.toLocaleDateString() + " Incluye los fines de semana.")
+                    errorFecha("Solo se puede Extender la Capacitacion 3 Dias. Menor o igual a esta fecha. " + plazo.toLocaleDateString() + " Incluye los fines de semana.")
                     return false;
                 }
             }
             else{
-                ahora.setDate(ahora.getDate() + 15)
                 errorFecha("Para agendar la capacitacion debe tener 15 Dias de anticipacion a la fecha Actual. Desde el día " + ahora.toLocaleDateString() + " puede agendar.")
                 return false;
             }
@@ -230,33 +233,51 @@ function validarDireccion() {
 }
 
 function validarAsesoria() {
-    resp = validarDescripcion();
-    if (resp == false){
-        return false;
-    }
+    // resp = validarDescripcion();
+    // if (resp == false){
+    //     return false;
+    // }
 
     resp = validarFechaInicio();
-
     if (resp == false){
         return false;
     }
 
-    resp = validarHora();
-    if (resp == false){
-        return false;
-    }
+    // resp = validarHora();
+    // if (resp == false){
+    //     return false;
+    // }
 
-    resp = validarAsistentes();
-    if (resp == false){
-        return false;
-    }
+    // resp = validarAsistentes();
+    // if (resp == false){
+    //     return false;
+    // }
 
-    resp = validarDireccion();
-    if (resp == false){
-        return false;
-    }
+    // resp = validarDireccion();
+    // if (resp == false){
+    //     return false;
+    // }
     
 }
+
+sumaFecha = function(d, fecha)
+{
+ var Fecha = new Date();
+ var sFecha = fecha || (Fecha.getDate() + "/" + (Fecha.getMonth() +1) + "/" + Fecha.getFullYear());
+ var sep = sFecha.indexOf('/') != -1 ? '/' : '-';
+ var aFecha = sFecha.split(sep);
+ var fecha = aFecha[2]+'/'+aFecha[1]+'/'+aFecha[0];
+ fecha= new Date(fecha);
+ fecha.setDate(fecha.getDate()+parseInt(d));
+ var anno=fecha.getFullYear();
+ var mes= fecha.getMonth()+1;
+ var dia= fecha.getDate();
+ mes = (mes < 10) ? ("0" + mes) : mes;
+ dia = (dia < 10) ? ("0" + dia) : dia;
+ var fechaFinal = dia+sep+mes+sep+anno;
+ return (fechaFinal);
+ }
+var fecha = sumaFecha(8,'30/11/2022');
 
 function success(menssaje){
     Swal.fire({

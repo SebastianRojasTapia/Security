@@ -68,8 +68,9 @@ def login(request):
             u.email = correo
             u.set_password(contrasena)
             salida = agregar_usuario(rutCliente, razonSocial, numeroContacto, rubro,  correo, u.password)
-            u.save()
+            
         if salida == 1:
+            u.save()
             data['mensaje'] = 'Se registro correctamente.'
         else:
             data['mensaje'] = 'Error en el registro vuelva intentar.'
