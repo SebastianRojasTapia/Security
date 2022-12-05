@@ -71,7 +71,7 @@ def login(request):
             
         if salida == 1:
             u.save()
-            data['mensaje'] = 'Se registro correctamente.'
+            data['mensaje'] = 'Se registro correctamente. Su usuario es ' + u.username
         else:
             data['mensaje'] = 'Error en el registro vuelva intentar.'
         return render(request,'login/login.html',data)
@@ -125,11 +125,12 @@ def loginProfesional(request):
                 numerocontacto = numeroContacto,
                 isvigente = "1",
             )
-            profesional.save()
             salida = agregar_usuario_profesional(rutProfesional,correo, u.password)
-            u.save()
+
             if salida == 1:
-                data['mensaje'] = 'Se registro correctamente.'
+                profesional.save()
+                u.save()
+                data['mensaje'] = 'Se registro correctamente. Su usuario es ' + u.username
             else:
                 data['mensaje'] = 'Error en el registro vuelva intentar.'
                 return render(request,'login/loginProfesional.html',data)
@@ -529,7 +530,6 @@ def perfil(request):
 def perfil_cliente_plan(request):
     user = request.user.get_username()
     data = {'solicitud':listar_usuario(user)}
-    user = request.user.get_username()
 
     cliente = Cliente.objects.get(razonsocial = user)
     contrato = Contrato.objects.filter(rutcliente_id = cliente.rutcliente).count()
@@ -601,6 +601,21 @@ def asesoriaCliente(request):
         'count':count_asesoria_cliente(user)
     }
     return render(request,'perfil/perfil-cliente-asesoria.html',data)
+
+# Se crea la vista salas de cliente que lista todas las salas del cliente
+@login_required(login_url='/login/')
+def salasCliente(request):
+    user = request.user.get_username()
+
+    countSalas = Message.objects.filter(username = user).order_by('-datetime').values_list('room', flat=True).distinct().count()
+    salas = Message.objects.filter(username = user).order_by('-datetime').values_list('room', flat=True).distinct()
+
+    data = {
+        'solicitud':listar_usuario(user),
+        'salas':salas,
+        'countSalas':countSalas
+    }
+    return render(request,'perfil/perfil-cliente-salas.html',data)
 
 # Se crea la vista contrato cliente que lista todos los contratos del cliente
 @login_required(login_url='/login/')

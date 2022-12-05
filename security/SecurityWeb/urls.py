@@ -20,6 +20,7 @@ urlpatterns = [
 
     path('perfil/',perfil, name='perfil'),
     path('perfil/plan/',perfil_cliente_plan, name='clientePlan'),
+    path('perfil/listaSalas/',salasCliente, name='salas'),
 
     path('perfil-Profesional/',perfil_profesional, name='perfilProfesional'),
     path('perfil-Profesional/kpi',perfil_profesional_kpi, name='perfilProfesionalKpi'),

@@ -238,30 +238,31 @@ function validarDireccion() {
 }
 
 function validarAsesoria() {
-    // resp = validarDescripcion();
-    // if (resp == false){
-    //     return false;
-    // }
+    
+    resp = validarDescripcion();
+    if (resp == false){
+        return false;
+    }
 
     resp = validarFechaInicio();
     if (resp == false){
         return false;
     }
 
-    // resp = validarHora();
-    // if (resp == false){
-    //     return false;
-    // }
+    resp = validarHora();
+    if (resp == false){
+        return false;
+    }
 
-    // resp = validarAsistentes();
-    // if (resp == false){
-    //     return false;
-    // }
+    resp = validarAsistentes();
+    if (resp == false){
+        return false;
+    }
 
-    // resp = validarDireccion();
-    // if (resp == false){
-    //     return false;
-    // }
+    resp = validarDireccion();
+    if (resp == false){
+        return false;
+    }
     
 }
 
