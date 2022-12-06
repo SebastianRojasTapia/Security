@@ -123,12 +123,12 @@ def loginProfesional(request):
                 primerapellido = primerApelido,
                 segundoapellido = segundoApelido,
                 numerocontacto = numeroContacto,
-                isvigente = "1",
+                isvigente = "1"
             )
+            profesional.save()
             salida = agregar_usuario_profesional(rutProfesional,correo, u.password)
 
             if salida == 1:
-                profesional.save()
                 u.save()
                 data['mensaje'] = 'Se registro correctamente. Su usuario es ' + u.username
             else:
@@ -661,7 +661,7 @@ def checklist(request):
 permission_required('SecurityWeb.add_check',login_url='/login/')
 @login_required(login_url='/login/')
 def listado_actividad_profesional(request):
-    actividad = Actividad.objects.all().order_by('idactividad')
+    actividad = Actividad.objects.all().order_by('idactividad').filter(rutprofesional = None)
     data = {
         'actividad':actividad
     }
@@ -672,7 +672,7 @@ def listado_actividad_profesional(request):
             data['actividad'] = actividad
             return render(request,'actividad-index.html',data)
     except:
-        actividad = Actividad.objects.all().order_by('idactividad')
+        actividad = Actividad.objects.all().order_by('idactividad').filter(rutprofesional = None)
         data['actividad'] = actividad
         return render(request,'actividad-index.html',data)
     return render(request,'actividad-index.html',data)
@@ -682,7 +682,7 @@ def listado_actividad_profesional(request):
 @login_required(login_url='/login/')
 def asignarProfesional(request,idactividad = None):
     try:
-        actividad = Actividad.objects.all().order_by('idactividad')
+        actividad = Actividad.objects.all().order_by('idactividad').filter(rutprofesional = None)
         data = {
             'actividad':actividad
         }

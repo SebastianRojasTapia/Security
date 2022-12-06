@@ -62,9 +62,10 @@
 
                 <div class="container-card" style="background: #fff;">
 
-                    <div class="card-container">
+                    <H5 class="text-center">Ingresa los datos de la tarjeta</H5>
+                    <div class="container-card">
 
-                        <div class="front">
+                        <div class="card-container mt-1">
                             <div class="image">
                                 <img src="{% static 'dist/img/chip.png'%}" alt="">
                                 <img src="{% static 'dist/img/visa.png'%}" alt="">
@@ -79,6 +80,7 @@
                                     <span>Valida Hasta</span>
                                     <div class="expiration">
                                         <span class="exp-month">MM/</span>
+                                        <span>/</span>
                                         <span class="exp-year">YY</span>
                                     </div>
                                 </div>
@@ -88,9 +90,9 @@
                         <div class="back">
                             <div class="stripe"></div>
                             <div class="box">
-                                <span>cvv</span>
+                                <span>CVV</span>
                                 <div class="cvv-box"></div>
-                                <img src="image/visa.png" alt="">
+                                <img src="{% static 'dist/img/visa.png'%}" alt="">
                             </div>
                         </div>
 
@@ -112,7 +114,7 @@
                             <div class="inputBox">
                                 <span>Mes Valida</span>
                                 <select id="" class="month-input" name="mes" required>
-                                    <option value="month" selected disabled>month</option>
+                                    <option value="Mes" selected disabled>Mes</option>
                                     <option value="01">01</option>
                                     <option value="02">02</option>
                                     <option value="03">03</option>
@@ -130,7 +132,7 @@
                             <div class="inputBox">
                                 <span>Año Valida</span>
                                 <select id="" class="year-input" name="anio" required>
-                                    <option value="year" selected disabled>year</option>
+                                    <option value="Año" selected disabled>Año</option>
                                     <option value="23">23</option>
                                     <option value="24">24</option>
                                     <option value="25">25</option>
@@ -143,11 +145,12 @@
                             </div>
                             <div class="inputBox">
                                 <span>CVV</span>
-                                <input pattern="[0-9.]+" type="text" maxlength="3" class="cvv-input" placeholder="CVV"
-                                    name="cvv" required>
+                                <input pattern="[0-9.]+" type="text" maxlength="3" class="cvv-input" placeholder="CVV" name="cvv" required>
                             </div>
                         </div>
-                        <button type="submit" class="submit-btn">Pagar</button>
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary">Pagar</button>
+                        </div>
                     </form>
 
                 </div>
