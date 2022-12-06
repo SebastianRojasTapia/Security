@@ -5,7 +5,7 @@ function validarNumeroContacto(){
         if (a.trim().length == 12) {
             return true;
         }
-        error("Error en el Número Telefonico.")
+        error("Debe ingresar los 9 digitos de su Número Telefono.")
         return false;
     }
     error("Debe Incluir +56 9")
