@@ -1,6 +1,7 @@
 {% extends "base.html" %}}
 
 {% load static %}
+
 {% block contenido %}
 
 <main class="cs-page-wrapper">
@@ -63,37 +64,41 @@
                 <div class="container-card" style="background: #fff;">
 
                     <H5 class="text-center">Ingresa los datos de la tarjeta</H5>
-                    <div class="container-card">
+                    <div class="container-card" style="background:#fff">
 
                         <div class="card-container mt-1">
-                            <div class="image">
-                                <img src="{% static 'dist/img/chip.png'%}" alt="">
-                                <img src="{% static 'dist/img/visa.png'%}" alt="">
-                            </div>
-                            <div class="card-number-box">################</div>
-                            <div class="flexbox">
-                                <div class="box">
-                                    <span>Nombre Titular</span>
-                                    <div class="card-holder-name">Nombre Completo</div>
+
+                            <div class="front">
+                                <div class="image">
+                                    <img src="{% static 'dist/img/chip.png'%}" alt="">
+                                    <img src="{% static 'dist/img/visa.png'%}" alt="">
                                 </div>
-                                <div class="box">
-                                    <span>Valida Hasta</span>
-                                    <div class="expiration">
-                                        <span class="exp-month">MM/</span>
-                                        <span>/</span>
-                                        <span class="exp-year">YY</span>
+                                <div class="card-number-box">################</div>
+                                <div class="flexbox">
+                                    <div class="box">
+                                        <span>Nombre Titular</span>
+                                        <div class="card-holder-name">Nombre Completo</div>
+                                    </div>
+                                    <div class="box">
+                                        <span>Valida Hasta</span>
+                                        <div class="expiration">
+                                            <span class="exp-month">MM</span>
+                                            <span>/</span>
+                                            <span class="exp-year">YY</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="back">
-                            <div class="stripe"></div>
-                            <div class="box">
-                                <span>CVV</span>
-                                <div class="cvv-box"></div>
-                                <img src="{% static 'dist/img/visa.png'%}" alt="">
+                            <div class="back">
+                                <div class="stripe"></div>
+                                <div class="box">
+                                    <span>CVV</span>
+                                    <div class="cvv-box"></div>
+                                    <img src="{% static 'dist/img/visa.png'%}" alt="">
+                                </div>
                             </div>
+
                         </div>
 
                     </div>
